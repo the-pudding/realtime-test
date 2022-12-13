@@ -1,6 +1,6 @@
 {
   "node_modules/.pnpm/@sveltejs+kit@1.0.0-next.567_svelte@3.53.1+vite@3.2.4/node_modules/@sveltejs/kit/src/runtime/client/start.js": {
-    "file": "_app/immutable/start-791222e5.js",
+    "file": "_app/immutable/start-f129a2e1.js",
     "src": "node_modules/.pnpm/@sveltejs+kit@1.0.0-next.567_svelte@3.53.1+vite@3.2.4/node_modules/@sveltejs/kit/src/runtime/client/start.js",
     "isEntry": true,
     "imports": [
@@ -38,12 +38,15 @@
     ]
   },
   "src/routes/+page.svelte": {
-    "file": "_app/immutable/components/pages/_page.svelte-5f667956.js",
+    "file": "_app/immutable/components/pages/_page.svelte-1faa2fe3.js",
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
       "_index-6358928a.js",
       "_preload-helper-9b728935.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page-7378a989.css"
     ]
   },
   "src/routes/demo/elements/+page.svelte": {
@@ -114,7 +117,7 @@
     ]
   },
   ".svelte-kit/generated/nodes/2.js": {
-    "file": "_app/immutable/chunks/2-21c0f60c.js",
+    "file": "_app/immutable/chunks/2-ea1f2a1b.js",
     "src": ".svelte-kit/generated/nodes/2.js",
     "isDynamicEntry": true,
     "imports": [
@@ -137,16 +140,20 @@
       "src/routes/demo/fonts/+page.svelte"
     ]
   },
-  "src/routes/demo/elements/+page.css": {
-    "file": "_app/immutable/assets/_page-83b17d31.css",
-    "src": "src/routes/demo/elements/+page.css"
+  "src/routes/+page.css": {
+    "file": "_app/immutable/assets/_page-7378a989.css",
+    "src": "src/routes/+page.css"
+  },
+  "src/routes/+layout.css": {
+    "file": "_app/immutable/assets/_layout-372f5a27.css",
+    "src": "src/routes/+layout.css"
   },
   "src/routes/demo/fonts/+page.css": {
     "file": "_app/immutable/assets/_page-694798f8.css",
     "src": "src/routes/demo/fonts/+page.css"
   },
-  "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout-372f5a27.css",
-    "src": "src/routes/+layout.css"
+  "src/routes/demo/elements/+page.css": {
+    "file": "_app/immutable/assets/_page-83b17d31.css",
+    "src": "src/routes/demo/elements/+page.css"
   }
 }

@@ -22,11 +22,6 @@
 			})
 			.subscribe(async (status) => {
 				subscribed = status === "SUBSCRIBED";
-				await channel.send({
-					type: "broadcast",
-					event: "answer",
-					payload: { value: "subscribed" }
-				});
 			});
 	};
 
@@ -46,13 +41,26 @@
 	};
 </script>
 
-<form on:submit|preventDefault={onSubmit}>
-	<input bind:value />
-	<button type="submit">Enter</button>
-</form>
+<div>
+	<p>connected: {subscribed}</p>
+	<form on:submit|preventDefault={onSubmit}>
+		<input bind:value />
+		<button type="submit">Enter</button>
+	</form>
 
-<ul>
-	{#each answers as answer}
-		<li>{answer}</li>
-	{/each}
-</ul>
+	<ul>
+		{#each answers as answer}
+			<li>{answer}</li>
+		{/each}
+	</ul>
+</div>
+
+<style>
+	div {
+		padding: 1rem;
+	}
+
+	ul {
+		margin-top: 1rem;
+	}
+</style>
