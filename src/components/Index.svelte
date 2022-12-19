@@ -20,9 +20,7 @@
 			.on("broadcast", { event: "answer" }, ({ payload }) => {
 				answers = [...answers, payload.value];
 			})
-			.subscribe(async (status) => {
-				subscribed = status === "SUBSCRIBED";
-			});
+			.subscribe();
 	};
 
 	onMount(() => {
