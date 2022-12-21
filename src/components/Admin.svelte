@@ -12,6 +12,8 @@
 
 	const clock = tweened(0);
 	let channel;
+	let clueText;
+	let clueId;
 
 	const setupBroadcast = () => {
 		const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -41,8 +43,10 @@
 		if (event === "clock" && payload) startClock();
 	};
 
-	onMount(() => {
-		if (browser) setupBroadcast();
+	onMount(async () => {
+		setupBroadcast();
+		clueId = 750;
+		clueText = "doesn't end with <span>k</span>|starts with <span>in</span>";
 	});
 </script>
 
@@ -59,4 +63,11 @@
 	<button on:click={() => send({ event: "clock", payload: true })}>start</button
 	>
 	<p>{$clock.toFixed(2)}</p>
+
+	<h2>Clue</h2>
+	<button
+		on:click={() =>
+			send({ event: "clue", payload: { text: clueText, id: clueId } })}
+		>clue</button
+	>
 </section>
