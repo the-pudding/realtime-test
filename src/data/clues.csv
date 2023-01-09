@@ -1,0 +1,301 @@
+id,text
+730,10 letters|adjective
+672,10 letters|noun
+347,11 letters
+803,11 letters|noun
+738,11 letters|verb
+747,12 letters
+493,12 letters|noun
+602,4 letters|contains <span>b</span>
+657,4 letters|verb|contains <span>l</span>
+802,5 letters|adjective|contains <span>s</span>
+629,5 letters|contains <span>o</span>
+639,5 letters|ends with <span>n</span>
+155,5 letters|not a noun
+666,6 letters|adjective|contains <span>d</span>
+488,6 letters|contains <span>o</span>
+331,6 letters|ends with <span>y</span>
+490,6 letters|verb|starts with <span>p</span>
+769,7 letters|adjective|contains <span>i</span>
+767,7 letters|contains <span>g</span>
+791,7 letters|contains <span>li</span>
+775,7 letters|contains <span>m</span>
+581,7 letters|contains <span>t</span>
+185,7 letters|noun
+787,7 letters|noun|contains <span>d</span>
+705,7 letters|starts with <span>p</span>
+281,7 letters|verb|contains <span>p</span>
+737,8 letters|contains <span>n</span>
+704,8 letters|contains <span>o</span>
+506,8 letters|contains <span>p</span>
+499,8 letters|starts with <span>a</span>
+650,9 letters|adjective
+721,9 letters|contains <span>p</span>
+466,9 letters|noun
+807,9 letters|starts with <span>m</span>
+336,adjective
+464,adjective|contains <span>c</span>
+579,adjective|contains <span>de</span>
+806,adjective|contains <span>es</span>
+554,adjective|contains <span>h</span>
+593,adjective|contains <span>he</span>
+467,adjective|contains <span>ic</span>
+516,adjective|contains <span>k</span>
+320,adjective|contains <span>l</span>
+746,adjective|contains <span>m</span>
+743,adjective|contains <span>ra</span>
+703,adjective|contains <span>re</span>
+661,adjective|contains <span>te</span>
+599,adjective|contains <span>ti</span>
+412,adjective|contains <span>w</span>
+423,adjective|contains <span>x</span>
+555,adjective|ends with <span>al</span>
+504,adjective|ends with <span>d</span>
+410,adjective|ends with <span>l</span>
+761,adjective|ends with <span>y</span>
+815,adjective|starts with <span>a</span>
+736,adjective|starts with <span>c</span>
+649,adjective|starts with <span>co</span>
+559,adjective|starts with <span>h</span>
+228,adjective|starts with <span>l</span>
+569,adjective|starts with <span>ma</span>
+403,adjective|starts with <span>s</span>
+165,adjective|starts with <span>v</span>
+377,adjective|starts with <span>w</span>
+260,at least 10 letters|adjective
+463,at least 10 letters|contains <span>b</span>
+762,at least 10 letters|contains <span>u</span>
+652,at least 10 letters|starts with <span>t</span>
+501,at least 11 letters|adjective
+799,at least 11 letters|ends with <span>d</span>
+809,at least 11 letters|ends with <span>n</span>
+498,at least 11 letters|verb
+376,at least 12 letters|verb
+197,at least 14 letters
+409,at least 4 letters|contains <span>j</span>
+561,at least 4 letters|starts with <span>be</span>
+477,at least 5 letters|adjective|contains <span>en</span>
+206,at least 5 letters|contains <span>it</span>
+595,at least 5 letters|starts with <span>f</span>
+532,at least 5 letters|starts with <span>le</span>
+249,at least 5 letters|starts with <span>w</span>
+592,at least 5 letters|verb|contains <span>x</span>
+778,at least 6 letters|contains <span>ch</span>
+482,at least 6 letters|contains <span>de</span>
+492,at least 6 letters|contains <span>f</span>
+406,at least 6 letters|contains <span>ll</span>
+764,at least 6 letters|contains <span>or</span>
+756,at least 6 letters|contains <span>z</span>
+582,at least 6 letters|ends with <span>l</span>
+181,at least 6 letters|ends with <span>st</span>
+572,at least 6 letters|noun|starts with <span>n</span>
+163,at least 6 letters|verb
+479,at least 6 letters|verb|contains <span>at</span>
+731,at least 6 letters|verb|contains <span>li</span>
+503,at least 6 letters|verb|contains <span>v</span>
+201,at least 6 letters|verb|starts with <span>e</span>
+744,at least 7 letters|starts with <span>g</span>
+723,at least 7 letters|starts with <span>in</span>
+665,at least 8 letters|contains <span>io</span>
+622,at least 8 letters|contains <span>it</span>
+788,at least 8 letters|contains <span>ra</span>
+777,at least 8 letters|starts with <span>l</span>
+568,at least 8 letters|verb
+755,at least 9 letters|contains <span>co</span>
+636,at least 9 letters|contains <span>ma</span>
+808,at least 9 letters|contains <span>me</span>
+674,at least 9 letters|contains <span>p</span>
+353,at least 9 letters|ends with <span>ng</span>
+549,at least 9 letters|starts with <span>i</span>
+515,at least 9 letters|starts with <span>l</span>
+399,at least 9 letters|verb
+742,contains <span>at</span>
+497,contains <span>b</span>
+429,contains <span>b</span>|contains <span>n</span>
+585,contains <span>ch</span>
+708,contains <span>co</span>
+699,contains <span>er</span>
+624,contains <span>g</span>|contains <span>p</span>
+391,contains <span>i</span>|contains <span>al</span>
+334,contains <span>in</span>
+194,contains <span>io</span>
+219,contains <span>j</span>
+606,contains <span>j</span>|contains <span>e</span>
+397,contains <span>le</span>
+184,contains <span>le</span>|contains <span>te</span>
+637,contains <span>me</span>
+366,contains <span>nd</span>
+623,contains <span>ne</span>
+122,contains <span>of</span>
+810,contains <span>p</span>|contains <span>y</span>
+682,contains <span>r</span>|ends with <span>ed</span>
+369,contains <span>re</span>
+656,contains <span>ro</span>
+765,contains <span>se</span>
+186,contains <span>te</span>
+248,contains <span>y</span>
+551,contains <span>y</span>|contains <span>h</span>
+280,ends with <span>c</span>
+480,ends with <span>ce</span>
+465,ends with <span>e</span>
+193,ends with <span>ed</span>
+630,ends with <span>en</span>
+644,ends with <span>es</span>
+692,ends with <span>g</span>
+790,ends with <span>it</span>
+375,ends with <span>me</span>
+380,ends with <span>nd</span>
+261,ends with <span>ng</span>
+604,ends with <span>om</span>
+527,ends with <span>p</span>
+748,ends with <span>se</span>
+239,ends with <span>te</span>
+603,noun|contains <span>a</span>|ends with <span>r</span>
+653,noun|contains <span>al</span>
+600,noun|contains <span>ar</span>
+333,noun|contains <span>b</span>
+398,noun|contains <span>ea</span>
+614,noun|contains <span>ed</span>
+691,noun|contains <span>en</span>
+478,noun|contains <span>ha</span>
+422,noun|contains <span>k</span>
+434,noun|contains <span>om</span>
+558,noun|contains <span>ou</span>
+222,noun|contains <span>q</span>
+643,noun|contains <span>q</span>|contains <span>ar</span>
+502,noun|contains <span>ra</span>|contains <span>n</span>
+529,noun|contains <span>se</span>
+120,noun|contains <span>si</span>
+411,noun|contains <span>th</span>
+283,noun|contains <span>to</span>
+368,noun|contains <span>v</span>
+199,noun|contains <span>ve</span>
+461,noun|contains <span>w</span>
+142,noun|ends with <span>a</span>
+671,noun|ends with <span>es</span>
+481,noun|ends with <span>l</span>
+486,noun|ends with <span>r</span>
+729,noun|ends with <span>st</span>
+259,noun|ends with <span>y</span>
+640,noun|starts with <span>an</span>
+776,noun|starts with <span>b</span>
+552,noun|starts with <span>c</span>
+526,noun|starts with <span>ch</span>
+468,noun|starts with <span>e</span>
+324,noun|starts with <span>f</span>
+615,noun|starts with <span>me</span>
+132,noun|starts with <span>si</span>
+112,noun|starts with <span>to</span>
+651,noun|starts with <span>v</span>
+407,rhyme with <span>bloke</span>
+655,rhyme with <span>chic</span>
+598,rhyme with <span>climb</span>
+574,rhyme with <span>code</span>
+491,rhyme with <span>convey</span>
+395,rhyme with <span>encode</span>
+693,rhyme with <span>exfoliation</span>
+517,rhyme with <span>flick</span>
+792,rhyme with <span>flock</span>
+367,rhyme with <span>fray</span>
+129,rhyme with <span>hurt</span>
+487,rhyme with <span>lapse</span>
+605,rhyme with <span>lock</span>
+133,rhyme with <span>mere</span>
+530,rhyme with <span>mite</span>
+349,rhyme with <span>mortify</span>
+247,rhyme with <span>mute</span>
+145,rhyme with <span>playback</span>
+427,rhyme with <span>press</span>
+156,rhyme with <span>punk</span>
+335,rhyme with <span>routing</span>
+168,rhyme with <span>sign</span>
+754,rhyme with <span>smell</span>
+469,rhyme with <span>spell</span>
+449,rhyme with <span>spot</span>
+557,rhyme with <span>spraying</span>
+675,rhyme with <span>stride</span>
+620,rhyme with <span>swan</span>
+322,rhyme with <span>tabulate</span>
+596,rhyme with <span>talk</span>
+641,rhyme with <span>teal</span>
+203,rhyme with <span>terminated</span>
+451,rhyme with <span>well</span>
+800,rhyme with <span>wire</span>
+405,rhyme with <span>wrack</span>
+321,starts with <span>a</span>
+590,starts with <span>as</span>
+500,starts with <span>be</span>
+770,starts with <span>c</span>|contains <span>e</span>
+591,starts with <span>es</span>
+198,starts with <span>he</span>
+188,starts with <span>hi</span>
+587,starts with <span>i</span>|contains <span>io</span>
+660,starts with <span>n</span>|contains <span>s</span>
+601,starts with <span>ou</span>
+525,starts with <span>q</span>
+681,starts with <span>s</span>
+438,starts with <span>si</span>
+580,starts with <span>te</span>
+663,starts with <span>th</span>
+229,starts with <span>v</span>
+533,starts with <span>w</span>|contains <span>t</span>
+766,under 10 letters|contains <span>he</span>
+805,under 10 letters|contains <span>it</span>
+131,under 10 letters|contains <span>x</span>
+209,under 11 letters|contains <span>om</span>
+664,under 11 letters|contains <span>si</span>
+113,under 5 letters|verb|contains <span>w</span>
+685,under 6 letters|contains <span>d</span>
+753,under 6 letters|contains <span>o</span>
+662,under 6 letters|contains <span>re</span>
+187,under 6 letters|contains <span>to</span>
+352,under 7 letters
+798,under 7 letters|adjective|contains <span>n</span>
+804,under 7 letters|contains <span>j</span>
+514,under 7 letters|contains <span>k</span>
+638,under 7 letters|contains <span>x</span>
+739,under 7 letters|noun|contains <span>o</span>
+697,under 8 letters|adjective
+673,under 8 letters|contains <span>g</span>
+394,under 8 letters|contains <span>y</span>
+436,under 8 letters|ends with <span>t</span>
+789,under 8 letters|ends with <span>y</span>
+325,under 8 letters|noun|contains <span>an</span>
+707,under 8 letters|starts with <span>k</span>
+208,under 8 letters|verb
+752,under 9 letters|contains <span>on</span>
+421,under 9 letters|starts with <span>co</span>
+722,under 9 letters|starts with <span>ro</span>
+654,verb|contains <span>a</span>|contains <span>p</span>
+720,verb|contains <span>ar</span>
+774,verb|contains <span>b</span>
+437,verb|contains <span>b</span>|contains <span>c</span>
+597,verb|contains <span>c</span>|ends with <span>g</span>
+378,verb|contains <span>ce</span>
+570,verb|contains <span>ea</span>
+700,verb|contains <span>ed</span>
+489,verb|contains <span>er</span>
+512,verb|contains <span>f</span>
+483,verb|contains <span>ha</span>
+745,verb|contains <span>he</span>
+763,verb|contains <span>me</span>
+635,verb|contains <span>ng</span>
+305,verb|contains <span>or</span>
+625,verb|contains <span>ou</span>
+816,verb|contains <span>ro</span>
+670,verb|contains <span>s</span>
+621,verb|contains <span>si</span>
+404,verb|contains <span>x</span>
+589,verb|contains <span>z</span>
+573,verb|ends with <span>k</span>
+571,verb|ends with <span>p</span>
+250,verb|starts with <span>co</span>
+462,verb|starts with <span>de</span>
+428,verb|starts with <span>i</span>
+801,verb|starts with <span>in</span>
+550,verb|starts with <span>j</span>
+586,verb|starts with <span>li</span>
+701,verb|starts with <span>m</span>
+282,verb|starts with <span>n</span>
+560,verb|starts with <span>o</span>
+553,verb|starts with <span>v</span>

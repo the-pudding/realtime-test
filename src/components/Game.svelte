@@ -4,8 +4,12 @@
 	import { browser } from "$app/environment";
 	import { createClient } from "@supabase/supabase-js";
 	import { insert } from "$utils/supabase.js";
-	import { range } from "d3";
+	import { range, scaleLinear, max } from "d3";
 	import loadCsv from "$utils/loadCsv.js";
+
+	export let admin;
+
+	const DURATION = 60;
 
 	const reasons = [
 		"(or a variation) was played by opponent",
@@ -20,8 +24,11 @@
 
 	const client = createClient(supabaseUrl, supabaseAnonKey);
 
-	const clock = tweened(0);
+	const clock = tweened(10);
 
+	const xScale = scaleLinear().range([80, 0]);
+
+	let disabled = true;
 	let channel;
 	let players = {};
 	let user;
@@ -32,7 +39,7 @@
 	let clueText;
 	let answerKey;
 	let validWords;
-	let playedLemmas;
+	// let playedLemmas;
 
 	const lemmaExists = ({ lemmas, corpus }) => {
 		const filtered = lemmas.split("|").filter((l) => {
@@ -128,11 +135,13 @@
 						...p.answers,
 						{ text: payload.new.text, lemmas: payload.new.lemmas }
 					];
-					playedLemmas.push({
-						self: payload.new.user === user,
-						timestamp: payload.new.created_at,
-						lemmas: payload.new.lemmas
-					});
+
+					p.score += payload.new.points;
+					// playedLemmas.push({
+					// 	self: payload.new.user === user,
+					// 	timestamp: payload.new.created_at,
+					// 	lemmas: payload.new.lemmas
+					// });
 					players = players;
 				}
 			)
@@ -150,7 +159,11 @@
 					table: "wordgame_tournament-players"
 				},
 				(payload) => {
-					players[payload.new.user] = { name: payload.new.name, answers: [] };
+					players[payload.new.user] = {
+						name: payload.new.name,
+						answers: [],
+						score: 0
+					};
 					console.log(players);
 				}
 			)
@@ -163,16 +176,45 @@
 		const { valid, reason } = validate({ text, lemmas });
 		const points = valid ? getPoints({ text }) : undefined;
 
+		resetInput();
+
 		if (valid) {
 			await insert({
 				table: "wordgame_tournament-answers",
-				data: { user, text, clue: clueId, lemmas }
+				data: { user, text, clue: clueId, lemmas, points }
 			});
 		}
 
 		console.log(reason, reasons[reason]);
+	};
+
+	const resetPlayerAnswers = () => {
+		for (let d in players) {
+			players[d].answers = [];
+		}
+	};
+
+	const resetInput = () => {
 		word = "";
 	};
+
+	const resetClock = () => {
+		clock.set(DURATION, { duration: 0 });
+	};
+
+	const resetScore = () => {
+		for (let d in players) {
+			players[d].score = [];
+		}
+	};
+
+	$: isPlayer = !admin;
+	$: scores = Object.values(players).map((d) => d.score);
+	$: maxScore = max(scores);
+	$: xDomain = [0, maxScore || 1];
+	$: xScale.domain(xDomain);
+
+	$: console.log(scores, maxScore, xDomain);
 
 	onMount(() => {
 		const client = createClient(supabaseUrl, supabaseAnonKey);
@@ -192,13 +234,18 @@
 			})
 			.on("broadcast", { event: "clock" }, ({ payload }) => {
 				if (payload) {
-					clock.set(0, { duration: 0 });
-					clock.set(10, { duration: 10000 }).then(() => {
+					clock.set(DURATION, { duration: 0 });
+					disabled = false;
+					clock.set(0, { duration: DURATION * 1000 }).then(() => {
 						console.log("promise", Date.now());
 					});
 				} else {
 					console.log("stop", Date.now(), $clock);
-					clock.set(10, { duration: 0 });
+					disabled = true;
+					resetPlayerAnswers();
+					resetInput();
+					resetClock();
+					resetScore();
 				}
 			})
 			.subscribe();
@@ -208,7 +255,7 @@
 	});
 </script>
 
-{#if view === "name"}
+{#if view === "name" && isPlayer}
 	<section class="name">
 		<p class:hidden={!user}>Ready</p>
 
@@ -218,24 +265,34 @@
 			<button type="submit">Submit</button>
 		</form>
 	</section>
-{:else if view === "play"}
+{:else if view === "play" || admin}
 	<section class="play">
 		<h2>time: {$clock.toFixed(2)}</h2>
-		<p>{@html clueText}</p>
-		<form on:submit|preventDefault={submitWord}>
-			<input bind:value={word} />
-			<button type="submit">Submit</button>
-		</form>
+		<p>clue: {@html clueText}</p>
 
-		<div class="players">
+		{#if isPlayer}
+			<form on:submit|preventDefault={submitWord}>
+				<input bind:value={word} {disabled} />
+				<button type="submit" {disabled}>Submit</button>
+			</form>
+
+			<ul>
+				{#each players[user].answers as { text, lemmas }}
+					<li>{text}</li>
+				{/each}
+			</ul>
+		{/if}
+
+		<div class="race">
 			{#each Object.keys(players) as key}
-				<div class="player">
-					<p class="name">{players[key].name}</p>
-					<ul>
-						{#each players[key].answers as { text, lemmas }}
-							<li>{text}</li>
-						{/each}
-					</ul>
+				{@const name = players[key].name}
+				{@const score = players[key].score}
+				{@const right = `${xScale(score)}%`}
+				<div class="row">
+					<div class="player" style:right>
+						<p class="score">{score}</p>
+						<p class="name">{name}</p>
+					</div>
 				</div>
 			{/each}
 		</div>
@@ -245,10 +302,27 @@
 {/if}
 
 <style>
-	.player {
-		padding: 1rem;
+	.row {
+		width: 100%;
+		position: relative;
+		height: 4rem;
 	}
+
+	.player {
+		top: 0;
+		padding: 0.5rem;
+		background: pink;
+		position: absolute;
+		transition: right 0.5s linear;
+	}
+
 	.hidden {
 		display: none;
+	}
+	.score {
+		position: absolute;
+		top: 0;
+		right: 0;
+		transform: translate(0, -100%);
 	}
 </style>

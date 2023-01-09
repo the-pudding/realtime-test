@@ -9,11 +9,16 @@
 	import { tweened } from "svelte/motion";
 	import { browser } from "$app/environment";
 	import { createClient } from "@supabase/supabase-js";
+	import Game from "$components/Game.svelte";
+	import clues from "$data/clues.csv";
 
-	const clock = tweened(0);
+	const DURATION = 60;
+
+	const clock = tweened(DURATION);
 	let channel;
 	let clueText;
 	let clueId;
+	let round = 1;
 
 	const setupBroadcast = () => {
 		const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -26,14 +31,16 @@
 	};
 
 	const startClock = () => {
-		clock.set(0, { duration: 0 });
-		clock.set(10, { duration: 10000 }).then(() => {
+		clock.set(DURATION, { duration: 0 });
+		clock.set(0, { duration: 1000 * DURATION }).then(() => {
 			console.log("end");
+			round += 1;
 			send({ event: "clock", payload: false });
 		});
 	};
 
 	const send = ({ event, payload }) => {
+		// console.log(event, payload);
 		channel.send({
 			type: "broadcast",
 			event,
@@ -43,10 +50,13 @@
 		if (event === "clock" && payload) startClock();
 	};
 
+	const onClueChange = (e) => {
+		clueId = e.target.value;
+		clueText = clues.find((d) => d.id === clueId).text;
+	};
+
 	onMount(async () => {
 		setupBroadcast();
-		clueId = 750;
-		clueText = "doesn't end with <span>k</span>|starts with <span>in</span>";
 	});
 </script>
 
@@ -64,10 +74,22 @@
 	>
 	<p>{$clock.toFixed(2)}</p>
 
+	<h2>Round {round}</h2>
+
 	<h2>Clue</h2>
+	<select on:change={onClueChange}>
+		{#each clues as clue, i}
+			<option value={clue.id}>{i + 1}. {clue.text}</option>
+		{/each}
+	</select>
 	<button
 		on:click={() =>
 			send({ event: "clue", payload: { text: clueText, id: clueId } })}
-		>clue</button
+		>set clue</button
 	>
+</section>
+
+<section>
+	<h2>Game Board</h2>
+	<Game admin={true} />
 </section>
