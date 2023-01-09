@@ -288,12 +288,12 @@
 				{@const name = players[key].name}
 				{@const score = players[key].score}
 				{@const right = `${xScale(score)}%`}
-				<div class="row">
-					<div class="player" style:right>
+				<ul class="players">
+					<li class="player" style:right>
 						<p class="score">{score}</p>
 						<p class="name">{name}</p>
-					</div>
-				</div>
+					</li>
+				</ul>
 			{/each}
 		</div>
 	</section>
@@ -302,10 +302,11 @@
 {/if}
 
 <style>
-	.row {
+	.players {
 		width: 100%;
 		position: relative;
-		height: 4rem;
+		height: 3rem;
+		margin-bottom: 1rem;
 	}
 
 	.player {
