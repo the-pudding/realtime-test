@@ -6,13 +6,21 @@
 	<div class="wordmark">
 		<a href="https://pudding.cool" aria-label="The Pudding">{@html wordmark}</a>
 	</div>
+	<div class="intro">
+		<h3>words against strangers</h3>
+		<h1>tournament of champions</h1>
+	</div>
 </header>
 
 <style>
 	.wordmark {
+		display: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 10em;
 		max-width: 10em;
-		margin: 0 auto;
-		padding: 1em 0;
+		padding: 1rem;
 	}
 
 	.wordmark a {
@@ -27,5 +35,17 @@
 
 	:global(.wordmark svg path) {
 		fill: currentColor;
+	}
+
+	.intro {
+		text-align: center;
+	}
+
+	h1 {
+		margin: 0;
+	}
+
+	h3 {
+		margin: 0.5rem;
 	}
 </style>

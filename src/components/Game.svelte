@@ -9,8 +9,22 @@
 
 	export let admin;
 
-	const PLAYER_WIDTH = 120;
+	const PLAYER_WIDTH = 160;
 	const DURATION = 60;
+	const COLORS = [
+		"#8dd3c7",
+		"#ffffb3",
+		"#bebada",
+		"#fb8072",
+		"#80b1d3",
+		"#fdb462",
+		"#b3de69",
+		"#fccde5",
+		"#d9d9d9",
+		"#bc80bd",
+		"#ccebc5",
+		"#ffed6f"
+	];
 
 	const reasons = [
 		"(or a variation) was played by opponent",
@@ -272,23 +286,30 @@
 
 {#if view === "name" && isPlayer}
 	<section class="name">
-		<p class:hidden={!user}>Ready</p>
+		<div class="ui">
+			<p class:hidden={!user}>thanks {name}! please wait.</p>
 
-		<form on:submit|preventDefault={submitName} class:hidden={user}>
-			<label for="name">enter your name</label>
-			<input id="name" bind:value={name} maxlength="12" />
-			<button type="submit">Submit</button>
-		</form>
+			<form on:submit|preventDefault={submitName} class:hidden={user}>
+				<label for="name">enter your name</label>
+				<input id="name" bind:value={name} maxlength="12" />
+				<button type="submit">&rarr;</button>
+			</form>
+		</div>
 	</section>
 {:else if view === "play" || admin}
 	<section class="play">
 		{#if isPlayer}
 			<div class="ui">
-				<h2>time: {$clock.toFixed(2)}</h2>
-				<p>clue: {@html clueText}</p>
+				<h3 class="time">time: {$clock.toFixed(2)}</h3>
+				<h3 class="clue">clue:</h3>
+				<ul class="clues">
+					{#each clueText.split("|") as c}
+						<li>{@html c}</li>
+					{/each}
+				</ul>
 				<form on:submit|preventDefault={submitWord}>
 					<input bind:value={word} {disabled} />
-					<button type="submit" {disabled}>Submit</button>
+					<button type="submit" {disabled}>&rarr;</button>
 				</form>
 
 				<ul>
@@ -301,15 +322,19 @@
 
 		<div class="race" bind:clientWidth={raceWidth}>
 			<ul class="players">
-				{#each Object.keys(players) as key}
+				{#each Object.keys(players) as key, i}
 					{@const name = players[key].name}
 					{@const score = players[key].score}
 					{@const right = `${xScale(score)}px`}
 					{@const width = `${PLAYER_WIDTH}px`}
+					{@const background = COLORS[i]}
 					<li class="player-wrapper">
-						<div class="player" style:right style:width>
-							<p class="score">{score}</p>
-							<p class="name">{name}</p>
+						<div class="player" style:right style:width style:background>
+							<p>
+								<span class="name">{name}</span><span class="score"
+									>{score}</span
+								>
+							</p>
 						</div>
 					</li>
 				{/each}
@@ -317,17 +342,37 @@
 		</div>
 	</section>
 {:else}
-	<h2>Waiting for game to begin...</h2>
+	<section>
+		<h2>please wait for game to begin</h2>
+	</section>
 {/if}
 
 <style>
+	h2 {
+		text-align: center;
+		margin: 0;
+		margin-top: 64px;
+	}
+
+	h3 {
+		margin: 0;
+	}
+
+	p {
+		margin: 0;
+	}
+
 	.play {
 		display: flex;
+		padding: 32px 16px;
 	}
 
 	.ui {
 		width: 15rem;
 		flex-grow: 0;
+		margin-right: 16px;
+		padding: 16px;
+		background: var(--color-gray-100);
 	}
 
 	.race {
@@ -340,7 +385,7 @@
 		padding: 0;
 	}
 
-	li {
+	.play li {
 		width: 100%;
 		position: relative;
 		list-style-type: none;
@@ -351,7 +396,6 @@
 	.player {
 		top: 0;
 		padding: 0.5rem;
-		background: pink;
 		position: absolute;
 		transition: right 0.25s ease-in-out;
 		margin: 0;
@@ -359,20 +403,38 @@
 	}
 
 	.player p {
+		display: flex;
+		justify-content: space-between;
 		margin: 0;
+	}
+
+	.name {
+		font-weight: 700;
 	}
 
 	.hidden {
 		display: none;
 	}
 
-	.score {
-		position: absolute;
-		top: 0;
-		right: 0;
+	input {
+		width: calc(100% - 48px);
 	}
 
-	section.play input {
-		width: 100%;
+	button {
+		width: 32px;
+	}
+
+	.ui ul {
+		list-style-type: none;
+		margin: 0 16px;
+		padding: 0;
+	}
+
+	.ui ul.clues {
+		list-style-type: disc;
+	}
+
+	.ui .clue {
+		margin-bottom: 16px;
 	}
 </style>

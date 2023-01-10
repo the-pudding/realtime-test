@@ -70,41 +70,74 @@
 </script>
 
 <section>
-	<h1>Admin</h1>
+	<h2>admin</h2>
 
-	<form on:submit|preventDefault={onGameIdSubmit}>
-		<label for="gameid">game id</label>
-		<input id="gameid" bind:value={gameId} />
-		<input type="submit" value="Submit" />
-	</form>
+	<fieldset>
+		<h3>setup</h3>
+		<form on:submit|preventDefault={onGameIdSubmit}>
+			<label for="gameid">game id</label>
+			<input id="gameid" bind:value={gameId} />
+			<input type="submit" value="Submit" />
+		</form>
+	</fieldset>
 
-	<h2>View</h2>
-	<button on:click={() => send({ event: "view", payload: "name" })}>name</button
-	>
-	<button on:click={() => send({ event: "view", payload: "play" })}>play</button
-	>
+	<fieldset>
+		<h3>show name view</h3>
+		<button on:click={() => send({ event: "view", payload: "name" })}
+			>show name</button
+		>
+	</fieldset>
 
-	<h2>Clock</h2>
-	<button on:click={() => send({ event: "clock", payload: true })}>start</button
-	>
-	<p>{$clock.toFixed(2)}</p>
+	<fieldset>
+		<h3>show play view</h3>
+		<button on:click={() => send({ event: "view", payload: "play" })}
+			>show play</button
+		>
+	</fieldset>
 
-	<h2>Round {round}</h2>
-
-	<h2>Clue</h2>
-	<select on:change={onClueChange}>
-		{#each clues as clue, i}
-			<option value={clue.id}>{i + 1}. {clue.text}</option>
-		{/each}
-	</select>
-	<button
+	<fieldset>
+		<h3>clue stuff</h3>
+		<select on:change={onClueChange}>
+			{#each clues as clue, i}
+				<option value={clue.id}>{i + 1}. {clue.text}</option>
+			{/each}
+		</select>
+		<button
+			on:click={() =>
+				send({ event: "clue", payload: { text: clueText, id: clueId } })}
+			>set clue</button
+		>
+		<!-- TODO -->
+		<!-- <button
 		on:click={() =>
 			send({ event: "clue", payload: { text: clueText, id: clueId } })}
-		>set clue</button
-	>
+		>reveal clue</button
+	> -->
+	</fieldset>
+	<fieldset>
+		<h3>clock</h3>
+
+		<button on:click={() => send({ event: "clock", payload: true })}
+			>start</button
+		>
+		<p>{$clock.toFixed(2)}</p>
+	</fieldset>
 </section>
 
 <section>
-	<h2>Game Board</h2>
+	<h2>game: {gameId}</h2>
+	<h3>round: {round}</h3>
 	<Game admin={true} />
 </section>
+
+<style>
+	section {
+		background: var(--color-gray-100);
+		padding: 16px;
+		margin: 16px;
+	}
+
+	fieldset {
+		margin: 16px;
+	}
+</style>
