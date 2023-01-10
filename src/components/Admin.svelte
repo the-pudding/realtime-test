@@ -18,6 +18,7 @@
 	let channel;
 	let clueText;
 	let clueId;
+	let gameId;
 	let round = 1;
 
 	const setupBroadcast = () => {
@@ -40,6 +41,7 @@
 	};
 
 	const send = ({ event, payload }) => {
+		if (!channel) return;
 		// console.log(event, payload);
 		channel.send({
 			type: "broadcast",
@@ -55,6 +57,13 @@
 		clueText = clues.find((d) => d.id === clueId).text;
 	};
 
+	const onGameIdSubmit = () => {
+		send({ event: "game", payload: gameId });
+		gameId = "";
+	};
+
+	$: send({ event: "round", payload: round });
+
 	onMount(async () => {
 		setupBroadcast();
 	});
@@ -62,6 +71,12 @@
 
 <section>
 	<h1>Admin</h1>
+
+	<form on:submit|preventDefault={onGameIdSubmit}>
+		<label for="gameid">game id</label>
+		<input id="gameid" bind:value={gameId} />
+		<input type="submit" value="Submit" />
+	</form>
 
 	<h2>View</h2>
 	<button on:click={() => send({ event: "view", payload: "name" })}>name</button

@@ -9,6 +9,7 @@
 
 	export let admin;
 
+	const PLAYER_WIDTH = 120;
 	const DURATION = 60;
 
 	const reasons = [
@@ -26,8 +27,11 @@
 
 	const clock = tweened(10);
 
-	const xScale = scaleLinear().range([80, 0]);
+	let xScale = scaleLinear();
 
+	let raceWidth = 100;
+	let round = 1;
+	let gameId;
 	let disabled = true;
 	let channel;
 	let players = {};
@@ -39,6 +43,7 @@
 	let clueText;
 	let answerKey;
 	let validWords;
+
 	// let playedLemmas;
 
 	const lemmaExists = ({ lemmas, corpus }) => {
@@ -181,7 +186,7 @@
 		if (valid) {
 			await insert({
 				table: "wordgame_tournament-answers",
-				data: { user, text, clue: clueId, lemmas, points }
+				data: { user, text, clue: clueId, lemmas, points, game: gameId, round }
 			});
 		}
 
@@ -208,13 +213,17 @@
 		}
 	};
 
+	const updateScale = () => {
+		xScale.range([raceWidth - PLAYER_WIDTH, 0]);
+		xScale = xScale;
+	};
+
 	$: isPlayer = !admin;
 	$: scores = Object.values(players).map((d) => d.score);
 	$: maxScore = max(scores);
 	$: xDomain = [0, maxScore || 1];
 	$: xScale.domain(xDomain);
-
-	$: console.log(scores, maxScore, xDomain);
+	$: updateScale(raceWidth);
 
 	onMount(() => {
 		const client = createClient(supabaseUrl, supabaseAnonKey);
@@ -248,6 +257,12 @@
 					resetScore();
 				}
 			})
+			.on("broadcast", { event: "game" }, ({ payload }) => {
+				gameId = payload;
+			})
+			.on("broadcast", { event: "round" }, ({ payload }) => {
+				round = payload;
+			})
 			.subscribe();
 
 		subscribeAnswers();
@@ -261,40 +276,44 @@
 
 		<form on:submit|preventDefault={submitName} class:hidden={user}>
 			<label for="name">enter your name</label>
-			<input id="name" bind:value={name} />
+			<input id="name" bind:value={name} maxlength="12" />
 			<button type="submit">Submit</button>
 		</form>
 	</section>
 {:else if view === "play" || admin}
 	<section class="play">
-		<h2>time: {$clock.toFixed(2)}</h2>
-		<p>clue: {@html clueText}</p>
-
 		{#if isPlayer}
-			<form on:submit|preventDefault={submitWord}>
-				<input bind:value={word} {disabled} />
-				<button type="submit" {disabled}>Submit</button>
-			</form>
+			<div class="ui">
+				<h2>time: {$clock.toFixed(2)}</h2>
+				<p>clue: {@html clueText}</p>
+				<form on:submit|preventDefault={submitWord}>
+					<input bind:value={word} {disabled} />
+					<button type="submit" {disabled}>Submit</button>
+				</form>
 
-			<ul>
-				{#each players[user].answers as { text, lemmas }}
-					<li>{text}</li>
-				{/each}
-			</ul>
+				<ul>
+					{#each players[user].answers as { text, lemmas }}
+						<li>{text}</li>
+					{/each}
+				</ul>
+			</div>
 		{/if}
 
-		<div class="race">
-			{#each Object.keys(players) as key}
-				{@const name = players[key].name}
-				{@const score = players[key].score}
-				{@const right = `${xScale(score)}%`}
-				<ul class="players">
-					<li class="player" style:right>
-						<p class="score">{score}</p>
-						<p class="name">{name}</p>
+		<div class="race" bind:clientWidth={raceWidth}>
+			<ul class="players">
+				{#each Object.keys(players) as key}
+					{@const name = players[key].name}
+					{@const score = players[key].score}
+					{@const right = `${xScale(score)}px`}
+					{@const width = `${PLAYER_WIDTH}px`}
+					<li class="player-wrapper">
+						<div class="player" style:right style:width>
+							<p class="score">{score}</p>
+							<p class="name">{name}</p>
+						</div>
 					</li>
-				</ul>
-			{/each}
+				{/each}
+			</ul>
 		</div>
 	</section>
 {:else}
@@ -302,11 +321,31 @@
 {/if}
 
 <style>
+	.play {
+		display: flex;
+	}
+
+	.ui {
+		width: 15rem;
+		flex-grow: 0;
+	}
+
+	.race {
+		flex-grow: 1;
+	}
+
 	.players {
 		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	li {
+		width: 100%;
 		position: relative;
+		list-style-type: none;
+		margin-bottom: 0.5rem;
 		height: 3rem;
-		margin-bottom: 1rem;
 	}
 
 	.player {
@@ -314,16 +353,26 @@
 		padding: 0.5rem;
 		background: pink;
 		position: absolute;
-		transition: right 0.5s linear;
+		transition: right 0.25s ease-in-out;
+		margin: 0;
+		left: auto;
+	}
+
+	.player p {
+		margin: 0;
 	}
 
 	.hidden {
 		display: none;
 	}
+
 	.score {
 		position: absolute;
 		top: 0;
 		right: 0;
-		transform: translate(0, -100%);
+	}
+
+	section.play input {
+		width: 100%;
 	}
 </style>
