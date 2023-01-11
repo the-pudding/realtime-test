@@ -61,6 +61,10 @@
 		send({ event: "game", payload: gameId });
 	};
 
+	const onToggle = ({ detail }) => {
+		send({ event: "toggle", payload: detail });
+	};
+
 	$: send({ event: "round", payload: round });
 
 	onMount(async () => {
@@ -131,7 +135,7 @@
 </section>
 
 <section>
-	<Game spectator={true} />
+	<Game spectator={true} on:toggle={onToggle} />
 </section>
 
 <style>

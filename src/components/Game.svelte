@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, createEventDispatcher } from "svelte";
 	import { tweened } from "svelte/motion";
 	import { browser } from "$app/environment";
 	import { createClient } from "@supabase/supabase-js";
@@ -26,6 +26,8 @@
 		"#ccebc5",
 		"#ffed6f"
 	];
+
+	const dispatch = createEventDispatcher();
 
 	const reasons = [
 		"(or a variation) was played by opponent",
@@ -184,7 +186,8 @@
 					players[payload.new.user] = {
 						name: payload.new.name,
 						answers: [],
-						score: 0
+						score: 0,
+						disabled: false
 					};
 				}
 			)
@@ -205,7 +208,7 @@
 				data: { user, text, clue: clueId, lemmas, points, game: gameId, round }
 			});
 		} else {
-			clearTimeout(timeout);
+			if (timeout) clearTimeout(timeout);
 			invalid = `${text} ${reason}`;
 			timeout = setTimeout(() => {
 				invalid = "";
@@ -241,6 +244,10 @@
 	const updateScale = () => {
 		xScale.range([raceWidth - PLAYER_WIDTH, 0]);
 		xScale = xScale;
+	};
+
+	const onPlayerClick = (key) => {
+		if (spectator) dispatch("toggle", key);
 	};
 
 	$: isPlayer = !spectator;
@@ -291,6 +298,9 @@
 				resetScore();
 				resetClue();
 			})
+			.on("broadcast", { event: "toggle" }, ({ payload }) => {
+				players[payload].disabled = !players[payload].disabled;
+			})
 			.subscribe();
 
 		subscribeAnswers();
@@ -320,7 +330,7 @@
 		{/if}
 	</section>
 	<section class="play">
-		{#if isPlayer}
+		{#if isPlayer && !players[user].disabled}
 			<div class="ui">
 				<h3 class="time">time: {$clock.toFixed(2)}</h3>
 				<h3 class="clue">clue:</h3>
@@ -355,7 +365,15 @@
 					{@const width = `${PLAYER_WIDTH}px`}
 					{@const background = COLORS[i]}
 					<li class="player-wrapper">
-						<div class="player" style:right style:width style:background>
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<div
+							class="player"
+							class:disabled={players[key].disabled}
+							style:right
+							style:width
+							style:background
+							on:click={() => onPlayerClick(key)}
+						>
 							<p>
 								<span class="username">{name}</span><span class="score"
 									>{score}</span
@@ -422,14 +440,16 @@
 	}
 
 	li.player-wrapper {
-		height: 3rem;
+		height: 48px;
+		position: relative;
+		margin-bottom: 16px;
 		list-style-type: none;
 		width: 100%;
 	}
 
 	.player {
 		top: 0;
-		padding: 0.5rem;
+		padding: 8px;
 		position: absolute;
 		transition: right 0.25s ease-in-out;
 		margin: 0;
@@ -437,11 +457,17 @@
 		border: 1px solid var(--color-gray-500);
 	}
 
+	.player.disabled {
+		opacity: 0.5;
+		filter: grayscale(100%);
+	}
+
 	.player p {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		margin: 0;
+		user-select: none;
 	}
 
 	.username {
@@ -493,10 +519,11 @@
 
 	.info p {
 		text-align: center;
+		margin-top: 16px;
 	}
 
 	.info p span {
-		margin: 0 16px;
+		margin-right: 8px;
 		background: var(--color-gray-100);
 		padding: 8px;
 	}

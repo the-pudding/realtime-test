@@ -18,7 +18,7 @@
 <style>
 	.players {
 		display: flex;
-		flex-direction: column;
+		justify-content: space-evenly;
 	}
 
 	.player {
