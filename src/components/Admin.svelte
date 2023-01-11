@@ -70,7 +70,7 @@
 		send({ event: "clear" });
 	};
 
-	$: send({ event: "round", payload: round });
+	$: round, send({ event: "round", payload: round });
 
 	onMount(async () => {
 		setupBroadcast();
