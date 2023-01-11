@@ -34,7 +34,6 @@
 	const startClock = () => {
 		clock.set(DURATION, { duration: 0 });
 		clock.set(0, { duration: 1000 * DURATION }).then(() => {
-			console.log("end");
 			round += 1;
 			send({ event: "clock", payload: false });
 		});
@@ -42,7 +41,6 @@
 
 	const send = ({ event, payload }) => {
 		if (!channel) return;
-		// console.log(event, payload);
 		channel.send({
 			type: "broadcast",
 			event,
@@ -57,9 +55,10 @@
 		clueText = clues.find((d) => d.id === clueId).text;
 	};
 
-	const onGameIdSubmit = () => {
+	const onGameIdSubmit = (e) => {
+		gameId = e.target[0].value;
+		e.target[0].value = "";
 		send({ event: "game", payload: gameId });
-		gameId = "";
 	};
 
 	$: send({ event: "round", payload: round });
@@ -76,9 +75,10 @@
 		<h3>setup</h3>
 		<form on:submit|preventDefault={onGameIdSubmit}>
 			<label for="gameid">game id</label>
-			<input id="gameid" bind:value={gameId} />
+			<input id="gameid" />
 			<input type="submit" value="Submit" />
 		</form>
+		<p>game id: {gameId}</p>
 	</fieldset>
 
 	<fieldset>
@@ -131,19 +131,16 @@
 </section>
 
 <section>
-	<h2>game: {gameId}</h2>
-	<h3>round: {round}</h3>
-	<Game admin={true} />
+	<Game spectator={true} />
 </section>
 
 <style>
 	section {
-		background: var(--color-gray-100);
 		padding: 16px;
 		margin: 16px;
 	}
 
 	fieldset {
-		margin: 16px;
+		margin: 16px 0;
 	}
 </style>

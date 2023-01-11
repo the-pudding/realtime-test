@@ -6,10 +6,11 @@
 	import { insert } from "$utils/supabase.js";
 	import { range, scaleLinear, max } from "d3";
 	import loadCsv from "$utils/loadCsv.js";
+	import Post from "$components/Post.svelte";
 
-	export let admin;
+	export let spectator;
 
-	const PLAYER_WIDTH = 160;
+	const PLAYER_WIDTH = 200;
 	const DURATION = 60;
 	const COLORS = [
 		"#8dd3c7",
@@ -54,13 +55,12 @@
 	let word;
 	let view;
 	let clueId;
-	let clueText;
+	let clueText = "";
 	let answerKey;
 	let validWords;
+	let invalid = "";
 
 	// let playedLemmas;
-
-	$: console.log({ clueText });
 
 	const lemmaExists = ({ lemmas, corpus }) => {
 		const filtered = lemmas.split("|").filter((l) => {
@@ -132,6 +132,7 @@
 	};
 
 	const submitName = async () => {
+		if (!name) return;
 		user = generateId(6);
 		const response = await insert({
 			table: "wordgame_tournament-players",
@@ -185,7 +186,6 @@
 						answers: [],
 						score: 0
 					};
-					console.log(players);
 				}
 			)
 			.subscribe();
@@ -204,9 +204,13 @@
 				table: "wordgame_tournament-answers",
 				data: { user, text, clue: clueId, lemmas, points, game: gameId, round }
 			});
+		} else {
+			clearTimeout(timeout);
+			invalid = `${text} ${reason}`;
+			timeout = setTimeout(() => {
+				invalid = "";
+			}, 2000);
 		}
-
-		console.log(reason, reasons[reason]);
 	};
 
 	const resetPlayerAnswers = () => {
@@ -239,7 +243,7 @@
 		xScale = xScale;
 	};
 
-	$: isPlayer = !admin;
+	$: isPlayer = !spectator;
 	$: scores = Object.values(players).map((d) => d.score);
 	$: maxScore = max(scores);
 	$: xDomain = [0, maxScore || 1];
@@ -297,36 +301,48 @@
 {#if view === "name" && isPlayer}
 	<section class="name">
 		<div class="ui">
-			<p class:hidden={!user}>thanks {name}! please wait.</p>
+			<p class:hidden={!user}>thanks {name}! <br />please wait.</p>
 
 			<form on:submit|preventDefault={submitName} class:hidden={user}>
 				<label for="name">enter your name</label>
-				<input id="name" bind:value={name} maxlength="12" />
+				<input id="name" bind:value={name} maxlength="8" />
 				<button type="submit">&rarr;</button>
 			</form>
 		</div>
 	</section>
-{:else if view === "play" || admin}
+{:else if view === "play" || spectator}
+	<section class="info">
+		<h2>{gameId}: round {round}</h2>
+		{#if spectator}
+			<p>
+				clue: {#each clueText.split("|") as c}<span>{@html c}</span>{/each}
+			</p>
+		{/if}
+	</section>
 	<section class="play">
 		{#if isPlayer}
 			<div class="ui">
 				<h3 class="time">time: {$clock.toFixed(2)}</h3>
 				<h3 class="clue">clue:</h3>
-				<ul class="clues">
-					{#each clueText.split("|") as c}
-						<li>{@html c}</li>
-					{/each}
-				</ul>
+				<div class="clues">
+					<ul>
+						{#each clueText.split("|") as c}
+							<li>{@html c}</li>
+						{/each}
+					</ul>
+				</div>
 				<form on:submit|preventDefault={submitWord}>
 					<input bind:value={word} {disabled} />
 					<button type="submit" {disabled}>&rarr;</button>
 				</form>
-
-				<ul class="answers">
-					{#each players[user].answers as { text, lemmas }}
-						<li>{text}</li>
-					{/each}
-				</ul>
+				<p class="invalid">{invalid}</p>
+				<div class="answers">
+					<ul>
+						{#each players[user].answers as { text, lemmas }}
+							<li>{text}</li>
+						{/each}
+					</ul>
+				</div>
 			</div>
 		{/if}
 
@@ -341,7 +357,7 @@
 					<li class="player-wrapper">
 						<div class="player" style:right style:width style:background>
 							<p>
-								<span class="name">{name}</span><span class="score"
+								<span class="username">{name}</span><span class="score"
 									>{score}</span
 								>
 							</p>
@@ -350,6 +366,12 @@
 				{/each}
 			</ul>
 		</div>
+	</section>
+
+	<section class="post">
+		{#if spectator || !disabled}
+			<Post {players} />
+		{/if}
 	</section>
 {:else}
 	<section>
@@ -377,6 +399,10 @@
 		padding: 32px 16px;
 	}
 
+	.name {
+		margin-top: 32px;
+	}
+
 	.ui {
 		width: 15rem;
 		flex-grow: 0;
@@ -395,15 +421,10 @@
 		padding: 0;
 	}
 
-	.play li {
-		width: 100%;
-		position: relative;
-		list-style-type: none;
-		margin-bottom: 0.5rem;
-	}
-
 	li.player-wrapper {
 		height: 3rem;
+		list-style-type: none;
+		width: 100%;
 	}
 
 	.player {
@@ -413,16 +434,23 @@
 		transition: right 0.25s ease-in-out;
 		margin: 0;
 		left: auto;
+		border: 1px solid var(--color-gray-500);
 	}
 
 	.player p {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		margin: 0;
 	}
 
-	.name {
+	.username {
 		font-weight: 700;
+		font-size: var(--18px);
+	}
+
+	.score {
+		font-size: var(--24px);
 	}
 
 	.hidden {
@@ -437,22 +465,45 @@
 		width: 32px;
 	}
 
-	.ui ul {
+	.ui .answers {
+		height: 320px;
+		overflow-y: hidden;
+	}
+
+	.ui .answers ul {
 		list-style-type: none;
 		margin: 0 16px;
 		padding: 0;
 		display: flex;
 		flex-direction: column-reverse;
 	}
-	.ui ul.answers li:last-of-type {
-		margin-top: 1rem;
+
+	.ui .answers ul li:last-of-type {
+		margin-top: 16px;
 	}
 
-	.ui ul.clues {
+	.ui .clues ul {
 		list-style-type: disc;
+		margin-bottom: 16px;
 	}
 
 	.ui .clue {
 		margin-bottom: 16px;
+	}
+
+	.info p {
+		text-align: center;
+	}
+
+	.info p span {
+		margin: 0 16px;
+		background: var(--color-gray-100);
+		padding: 8px;
+	}
+
+	.invalid {
+		margin: 16px 0;
+		color: var(--color-focus);
+		height: 48px;
 	}
 </style>
