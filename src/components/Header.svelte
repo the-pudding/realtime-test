@@ -8,7 +8,7 @@
 	</div>
 	<div class="intro">
 		<h3>words against strangers</h3>
-		<h1>tournament of champions</h1>
+		<h1>🏆 tournament of champions 🏆</h1>
 	</div>
 </header>
 
