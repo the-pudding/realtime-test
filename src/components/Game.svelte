@@ -42,7 +42,7 @@
 
 	const client = createClient(supabaseUrl, supabaseAnonKey);
 
-	const clock = tweened(10);
+	const clock = tweened(60);
 
 	let xScale = scaleLinear();
 
