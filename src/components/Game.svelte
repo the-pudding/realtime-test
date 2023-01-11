@@ -60,6 +60,8 @@
 
 	// let playedLemmas;
 
+	$: console.log({ clueText });
+
 	const lemmaExists = ({ lemmas, corpus }) => {
 		const filtered = lemmas.split("|").filter((l) => {
 			return !!corpus.find((c) => c === l);
@@ -217,6 +219,11 @@
 		word = "";
 	};
 
+	const resetClue = () => {
+		clueId = "";
+		clueText = "";
+	};
+
 	const resetClock = () => {
 		clock.set(DURATION, { duration: 0 });
 	};
@@ -265,10 +272,6 @@
 				} else {
 					console.log("stop", Date.now(), $clock);
 					disabled = true;
-					resetPlayerAnswers();
-					resetInput();
-					resetClock();
-					resetScore();
 				}
 			})
 			.on("broadcast", { event: "game" }, ({ payload }) => {
@@ -276,6 +279,13 @@
 			})
 			.on("broadcast", { event: "round" }, ({ payload }) => {
 				round = payload;
+			})
+			.on("broadcast", { event: "clear" }, ({ payload }) => {
+				resetPlayerAnswers();
+				resetInput();
+				resetClock();
+				resetScore();
+				resetClue();
 			})
 			.subscribe();
 
@@ -312,7 +322,7 @@
 					<button type="submit" {disabled}>&rarr;</button>
 				</form>
 
-				<ul>
+				<ul class="answers">
 					{#each players[user].answers as { text, lemmas }}
 						<li>{text}</li>
 					{/each}
@@ -390,6 +400,9 @@
 		position: relative;
 		list-style-type: none;
 		margin-bottom: 0.5rem;
+	}
+
+	li.player-wrapper {
 		height: 3rem;
 	}
 
@@ -428,6 +441,11 @@
 		list-style-type: none;
 		margin: 0 16px;
 		padding: 0;
+		display: flex;
+		flex-direction: column-reverse;
+	}
+	.ui ul.answers li:last-of-type {
+		margin-top: 1rem;
 	}
 
 	.ui ul.clues {

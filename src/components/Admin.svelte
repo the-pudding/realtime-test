@@ -89,13 +89,6 @@
 	</fieldset>
 
 	<fieldset>
-		<h3>show play view</h3>
-		<button on:click={() => send({ event: "view", payload: "play" })}
-			>show play</button
-		>
-	</fieldset>
-
-	<fieldset>
 		<h3>clue stuff</h3>
 		<select on:change={onClueChange}>
 			{#each clues as clue, i}
@@ -114,6 +107,14 @@
 		>reveal clue</button
 	> -->
 	</fieldset>
+
+	<fieldset>
+		<h3>show play view</h3>
+		<button on:click={() => send({ event: "view", payload: "play" })}
+			>show play</button
+		>
+	</fieldset>
+
 	<fieldset>
 		<h3>clock</h3>
 
@@ -121,6 +122,11 @@
 			>start</button
 		>
 		<p>{$clock.toFixed(2)}</p>
+	</fieldset>
+
+	<fieldset>
+		<h3>prepare for new round</h3>
+		<button on:click={() => send({ event: "clear" })}>clear</button>
 	</fieldset>
 </section>
 
