@@ -1,6 +1,6 @@
 {
   "node_modules/.pnpm/@sveltejs+kit@1.0.0-next.567_svelte@3.53.1+vite@3.2.4/node_modules/@sveltejs/kit/src/runtime/client/start.js": {
-    "file": "_app/immutable/start-bd1d6b84.js",
+    "file": "_app/immutable/start-c8bf163f.js",
     "src": "node_modules/.pnpm/@sveltejs+kit@1.0.0-next.567_svelte@3.53.1+vite@3.2.4/node_modules/@sveltejs/kit/src/runtime/client/start.js",
     "isEntry": true,
     "imports": [
@@ -17,14 +17,14 @@
     ]
   },
   "src/routes/+layout.svelte": {
-    "file": "_app/immutable/components/pages/_layout.svelte-e2e61c01.js",
+    "file": "_app/immutable/components/pages/_layout.svelte-e0574328.js",
     "src": "src/routes/+layout.svelte",
     "isEntry": true,
     "imports": [
       "_index-bce8d7cb.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout-b71eb5df.css"
+      "_app/immutable/assets/_layout-89c18cd6.css"
     ]
   },
   "src/routes/+error.svelte": {
@@ -37,33 +37,33 @@
     ]
   },
   "src/routes/+page.svelte": {
-    "file": "_app/immutable/components/pages/_page.svelte-9576403c.js",
+    "file": "_app/immutable/components/pages/_page.svelte-14b1aa93.js",
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
       "_index-bce8d7cb.js",
-      "_Game-75fd2c1e.js"
+      "_Game-55669486.js"
     ]
   },
   "src/routes/admin/+page.svelte": {
-    "file": "_app/immutable/components/pages/admin/_page.svelte-ca1baeb9.js",
+    "file": "_app/immutable/components/pages/admin/_page.svelte-a4452a65.js",
     "src": "src/routes/admin/+page.svelte",
     "isEntry": true,
     "imports": [
       "_index-bce8d7cb.js",
-      "_Game-75fd2c1e.js"
+      "_Game-55669486.js"
     ],
     "css": [
       "_app/immutable/assets/_page-94bd2496.css"
     ]
   },
   "src/routes/watch/+page.svelte": {
-    "file": "_app/immutable/components/pages/watch/_page.svelte-547f8810.js",
+    "file": "_app/immutable/components/pages/watch/_page.svelte-80100baa.js",
     "src": "src/routes/watch/+page.svelte",
     "isEntry": true,
     "imports": [
       "_index-bce8d7cb.js",
-      "_Game-75fd2c1e.js"
+      "_Game-55669486.js"
     ]
   },
   "src/routes/+layout.js": {
@@ -95,19 +95,19 @@
   "__layout-df126b6f.js": {
     "file": "_app/immutable/chunks/_layout-df126b6f.js"
   },
-  "_Game-75fd2c1e.js": {
-    "file": "_app/immutable/chunks/Game-75fd2c1e.js",
+  "_Game-55669486.js": {
+    "file": "_app/immutable/chunks/Game-55669486.js",
     "imports": [
       "_index-bce8d7cb.js",
       "_index-ff7600b0.js",
       "_preload-helper-9b728935.js"
     ],
     "css": [
-      "_app/immutable/assets/Game-3806e398.css"
+      "_app/immutable/assets/Game-2f212f49.css"
     ]
   },
   ".svelte-kit/generated/nodes/0.js": {
-    "file": "_app/immutable/chunks/0-e1dcaf73.js",
+    "file": "_app/immutable/chunks/0-ed2e71ae.js",
     "src": ".svelte-kit/generated/nodes/0.js",
     "isDynamicEntry": true,
     "imports": [
@@ -124,7 +124,7 @@
     ]
   },
   ".svelte-kit/generated/nodes/2.js": {
-    "file": "_app/immutable/chunks/2-40f98243.js",
+    "file": "_app/immutable/chunks/2-228ce588.js",
     "src": ".svelte-kit/generated/nodes/2.js",
     "isDynamicEntry": true,
     "imports": [
@@ -132,7 +132,7 @@
     ]
   },
   ".svelte-kit/generated/nodes/3.js": {
-    "file": "_app/immutable/chunks/3-454a9b69.js",
+    "file": "_app/immutable/chunks/3-8f3d81f4.js",
     "src": ".svelte-kit/generated/nodes/3.js",
     "isDynamicEntry": true,
     "imports": [
@@ -140,7 +140,7 @@
     ]
   },
   ".svelte-kit/generated/nodes/4.js": {
-    "file": "_app/immutable/chunks/4-c14642e1.js",
+    "file": "_app/immutable/chunks/4-aac68e62.js",
     "src": ".svelte-kit/generated/nodes/4.js",
     "isDynamicEntry": true,
     "imports": [
@@ -152,11 +152,11 @@
     "src": "src/routes/admin/+page.css"
   },
   "Game.css": {
-    "file": "_app/immutable/assets/Game-3806e398.css",
+    "file": "_app/immutable/assets/Game-2f212f49.css",
     "src": "Game.css"
   },
   "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout-b71eb5df.css",
+    "file": "_app/immutable/assets/_layout-89c18cd6.css",
     "src": "src/routes/+layout.css"
   }
 }
