@@ -12,7 +12,7 @@
 
 	const PLAYER_WIDTH = 200;
 	const DURATION = 60;
-	const COLORS = [
+	const colors = [
 		"#8dd3c7",
 		"#ffffb3",
 		"#bebada",
@@ -364,7 +364,7 @@
 					{@const score = players[key].score}
 					{@const right = `${xScale(score)}px`}
 					{@const width = `${PLAYER_WIDTH}px`}
-					{@const background = COLORS[i]}
+					{@const background = colors[i]}
 					<li class="player-wrapper">
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
@@ -389,7 +389,7 @@
 
 	<section class="post">
 		{#if spectator || disabled || players[user].disabled}
-			<Post {players} />
+			<Post {players} {colors} />
 		{/if}
 	</section>
 {:else}

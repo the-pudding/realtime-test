@@ -1,10 +1,12 @@
 <script>
 	export let players;
+	export let colors;
 </script>
 
 <div class="players">
 	{#each Object.keys(players) as key, i}
-		<div class="player">
+		{@const background = colors[i]}
+		<div class="player" style:background>
 			<p>{players[key].name}</p>
 			<ul class="answers">
 				{#each players[key].answers as { text }}
