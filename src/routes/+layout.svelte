@@ -3,7 +3,13 @@
 	import Header from "$components/Header.svelte";
 </script>
 
-<Header />
 <main id="content">
+	<Header />
 	<slot />
 </main>
+
+<style>
+	main {
+		min-height: 101vh;
+	}
+</style>

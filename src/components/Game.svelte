@@ -46,6 +46,7 @@
 
 	let xScale = scaleLinear();
 
+	let timeout;
 	let raceWidth = 100;
 	let round = 1;
 	let gameId;
@@ -209,7 +210,7 @@
 			});
 		} else {
 			if (timeout) clearTimeout(timeout);
-			invalid = `${text} ${reason}`;
+			invalid = `${text} ${reasons[reason]}`;
 			timeout = setTimeout(() => {
 				invalid = "";
 			}, 2000);
@@ -237,7 +238,7 @@
 
 	const resetScore = () => {
 		for (let d in players) {
-			players[d].score = [];
+			players[d].score = 0;
 		}
 	};
 
@@ -387,7 +388,7 @@
 	</section>
 
 	<section class="post">
-		{#if spectator || !disabled}
+		{#if spectator || disabled || players[user].disabled}
 			<Post {players} />
 		{/if}
 	</section>
@@ -504,10 +505,6 @@
 		flex-direction: column-reverse;
 	}
 
-	.ui .answers ul li:last-of-type {
-		margin-top: 16px;
-	}
-
 	.ui .clues ul {
 		list-style-type: disc;
 		margin-bottom: 16px;
@@ -531,6 +528,6 @@
 	.invalid {
 		margin: 16px 0;
 		color: var(--color-focus);
-		height: 48px;
+		height: 36px;
 	}
 </style>

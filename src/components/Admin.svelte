@@ -65,6 +65,11 @@
 		send({ event: "toggle", payload: detail });
 	};
 
+	const onClear = () => {
+		clock.set(DURATION, { duration: 0 });
+		send({ event: "clear" });
+	};
+
 	$: send({ event: "round", payload: round });
 
 	onMount(async () => {
@@ -130,7 +135,7 @@
 
 	<fieldset>
 		<h3>prepare for new round</h3>
-		<button on:click={() => send({ event: "clear" })}>clear</button>
+		<button on:click={onClear}>clear</button>
 	</fieldset>
 </section>
 
