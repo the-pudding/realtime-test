@@ -83,6 +83,7 @@
 	<h2>admin</h2>
 
 	<fieldset>
+		<p><mark>DO NOT START UNTIL ALL PLAYERS ARE ON PAGE</mark></p>
 		<h3>setup</h3>
 		<form on:submit|preventDefault={onGameIdSubmit}>
 			<label for="gameid">game id</label>
