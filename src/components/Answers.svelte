@@ -1,17 +1,14 @@
 <script>
 	export let players;
-	export let colors;
 </script>
 
 <div class="players">
-	{#each Object.keys(players) as key, i}
-		{@const background = colors[i]}
-		{@const disabled = players[key].disabled}
+	{#each players as { name, user, disabled, background, answers }}
 		<div class="player" style:background class:disabled>
-			<p>{players[key].name}</p>
+			<p>{name}</p>
 			<ul class="answers">
-				{#each players[key].answers as { text }}
-					<li>{text}</li>
+				{#each answers as { text, points }}
+					<li>{text} ({points})</li>
 				{/each}
 			</ul>
 		</div>

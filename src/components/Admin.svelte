@@ -146,7 +146,7 @@
 </section>
 
 <section>
-	<Game spectator={true} on:toggle={onToggle} />
+	<Game admin={true} spectator={true} on:toggle={onToggle} />
 </section>
 
 <style>

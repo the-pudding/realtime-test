@@ -4,7 +4,7 @@
 	import { browser } from "$app/environment";
 	import { createClient } from "@supabase/supabase-js";
 	import { insert } from "$utils/supabase.js";
-	import { range } from "d3";
+	import { range, ascending } from "d3";
 	import loadCsv from "$utils/loadCsv.js";
 	import Name from "$components/Name.svelte";
 	import Answers from "$components/Answers.svelte";
@@ -13,6 +13,7 @@
 	import UserInput from "$components/UserInput.svelte";
 
 	export let spectator = false;
+	export let admin = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -54,6 +55,7 @@
 	let disabled = true;
 	let channel;
 	let players = {};
+	let playersRender = [];
 	let user;
 	let name;
 	let view;
@@ -187,10 +189,16 @@
 	};
 
 	const onPlayerClick = ({ detail }) => {
-		if (spectator) dispatch("toggle", detail);
+		if (admin) dispatch("toggle", detail);
 	};
 
-	const subscribeToBroadcast = () => {
+	const mapAndSortPlayers = (sort) => {
+		console.log(sort);
+		playersRender = Object.values(players);
+		if (sort) playersRender.sort((a, b) => ascending(a.disabled, b.disabled));
+	};
+
+	const subscribeBroadcast = () => {
 		channel
 			.on("broadcast", { event: "clue" }, async ({ payload }) => {
 				reveal = false;
@@ -209,7 +217,7 @@
 					clock.set(duration, { duration: 0 });
 					disabled = false;
 					reveal = true;
-					if (showUserInput) userInput.focus();
+					if (userInput) userInput.focus();
 					clock.set(0, { duration: duration * 1000 }).then(() => {
 						console.log("promise", Date.now());
 					});
@@ -225,7 +233,7 @@
 				round = payload;
 			})
 			.on("broadcast", { event: "clear" }, ({ payload }) => {
-				if (showUserInput) userInput.reset();
+				if (userInput) userInput.reset();
 				resetPlayerAnswers();
 				resetClock();
 				resetScore();
@@ -233,6 +241,7 @@
 			})
 			.on("broadcast", { event: "toggle" }, ({ payload }) => {
 				players[payload].disabled = !players[payload].disabled;
+				mapAndSortPlayers(true);
 			})
 			.subscribe();
 	};
@@ -249,10 +258,16 @@
 				},
 				(payload) => {
 					// TODO more efficient way to reactively update?
+					console.log(payload.new);
 					const p = players[payload.new.user];
 					p.answers = [
 						...p.answers,
-						{ text: payload.new.text, lemmas: payload.new.lemmas }
+						{
+							text: payload.new.text,
+							lemmas: payload.new.lemmas,
+							created: payload.new.created_at,
+							points: payload.new.points
+						}
 					];
 
 					p.score += payload.new.points;
@@ -262,6 +277,7 @@
 					// 	lemmas: payload.new.lemmas
 					// });
 					players = players;
+					mapAndSortPlayers();
 				}
 			)
 			.subscribe();
@@ -279,11 +295,15 @@
 				},
 				(payload) => {
 					players[payload.new.user] = {
+						user: payload.new.user,
 						name: payload.new.name,
 						answers: [],
 						score: 0,
-						disabled: false
+						disabled: false,
+						background: colors.shift()
 					};
+
+					mapAndSortPlayers();
 				}
 			)
 			.subscribe();
@@ -300,7 +320,7 @@
 		const client = createClient(supabaseUrl, supabaseAnonKey);
 		channel = client.channel("game");
 
-		subscribeToBroadcast();
+		subscribeBroadcast();
 		subscribeAnswers();
 		subscribePlayers();
 	});
@@ -332,12 +352,18 @@
 			</div>
 		{/if}
 
-		<Race {players} {colors} {spectator} {user} on:click={onPlayerClick} />
+		<Race
+			{admin}
+			{spectator}
+			players={playersRender}
+			{user}
+			on:click={onPlayerClick}
+		/>
 	</section>
 
 	<section class="answers">
 		{#if showAnswers}
-			<Answers {players} {colors} />
+			<Answers players={playersRender} />
 		{/if}
 	</section>
 {:else}

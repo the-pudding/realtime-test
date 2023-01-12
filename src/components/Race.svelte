@@ -3,7 +3,7 @@
 	import { createEventDispatcher } from "svelte";
 
 	export let players;
-	export let colors;
+	export let admin;
 
 	const PLAYER_WIDTH = 200;
 	const dispatch = createEventDispatcher();
@@ -16,7 +16,7 @@
 		xScale = xScale;
 	};
 
-	$: scores = Object.values(players).map((d) => d.score);
+	$: scores = players.map((d) => d.score);
 	$: maxScore = max(scores);
 	$: xDomain = [0, maxScore || 1];
 	$: xScale.domain(xDomain);
@@ -25,22 +25,19 @@
 
 <div class="race" bind:clientWidth={raceWidth}>
 	<ul class="players">
-		{#each Object.keys(players) as key, i}
-			{@const name = players[key].name}
-			{@const score = players[key].score}
+		{#each players as { name, user, disabled, background, score }}
 			{@const right = `${xScale(score)}px`}
 			{@const width = `${PLAYER_WIDTH}px`}
-			{@const background = colors[i]}
-			{@const disabled = players[key].disabled}
 			<li class="player-wrapper">
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="player"
 					class:disabled
+					class:admin
 					style:right
 					style:width
 					style:background
-					on:click={() => dispatch("click", key)}
+					on:click={() => dispatch("click", user)}
 				>
 					<p>
 						<span class="username">{name}</span><span class="score"
@@ -80,6 +77,12 @@
 		margin: 0;
 		left: auto;
 		border: 1px solid var(--color-gray-500);
+		pointer-events: none;
+	}
+
+	.player.admin {
+		pointer-events: auto;
+		cursor: pointer;
 	}
 
 	.player.disabled {

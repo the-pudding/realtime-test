@@ -8,7 +8,7 @@
 	export let answers;
 
 	export const focus = () => {
-		inputEl.focus();
+		if (inputEl) inputEl.focus();
 	};
 
 	export const reset = () => {
