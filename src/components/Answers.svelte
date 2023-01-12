@@ -21,21 +21,29 @@
 <style>
 	.players {
 		display: flex;
-		justify-content: space-evenly;
+		justify-content: center;
+		border-top: 4px solid var(--color-black);
+		padding-top: 16px;
 	}
 
 	.player {
 		padding: 8px;
+		width: 160px;
+		padding: 8px;
+		margin: 0 8px;
+		border: 1px solid var(--color-gray-500);
 	}
 
 	p {
 		font-weight: 700;
+		font-size: var(--18px);
 	}
 
 	ul {
 		display: flex;
 		flex-direction: column-reverse;
-		width: 160px;
+		margin: 0;
+		padding: 0;
 	}
 
 	ul.disabled {
@@ -45,5 +53,7 @@
 
 	li {
 		margin: 0;
+		list-style-type: none;
+		font-size: var(--18px);
 	}
 </style>

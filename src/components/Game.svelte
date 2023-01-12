@@ -186,8 +186,8 @@
 		}
 	};
 
-	const onPlayerClick = (key) => {
-		if (spectator) dispatch("toggle", key);
+	const onPlayerClick = ({ detail }) => {
+		if (spectator) dispatch("toggle", detail);
 	};
 
 	const subscribeToBroadcast = () => {

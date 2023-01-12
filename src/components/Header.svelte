@@ -14,7 +14,7 @@
 
 <style>
 	header {
-		margin-bottom: 32px;
+		margin-bottom: 16px;
 	}
 
 	.wordmark {
