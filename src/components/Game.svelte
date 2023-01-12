@@ -42,10 +42,11 @@
 
 	const client = createClient(supabaseUrl, supabaseAnonKey);
 
-	const clock = tweened(60);
+	const clock = tweened(DURATION);
 
 	let xScale = scaleLinear();
 
+	let reveal;
 	let timeout;
 	let raceWidth = 100;
 	let round = 1;
@@ -264,6 +265,7 @@
 
 		channel
 			.on("broadcast", { event: "clue" }, async ({ payload }) => {
+				reveal = false;
 				const { id, text } = payload;
 				const url = `https://pudding.cool/games/words-against-strangers-data/clue-answers/${id}.csv?version=${Date.now()}`;
 				answerKey = await loadCsv(url);
@@ -278,6 +280,7 @@
 				if (payload) {
 					clock.set(DURATION, { duration: 0 });
 					disabled = false;
+					reveal = true;
 					clock.set(0, { duration: DURATION * 1000 }).then(() => {
 						console.log("promise", Date.now());
 					});
@@ -336,7 +339,7 @@
 				<h3 class="time">time: {$clock.toFixed(2)}</h3>
 				<h3 class="clue">clue:</h3>
 				<div class="clues">
-					<ul>
+					<ul class:reveal>
 						{#each clueText.split("|") as c}
 							<li>{@html c}</li>
 						{/each}
@@ -508,6 +511,11 @@
 	.ui .clues ul {
 		list-style-type: disc;
 		margin-bottom: 16px;
+		visibility: hidden;
+	}
+
+	.ui .clues ul {
+		visibility: visible;
 	}
 
 	.ui .clue {
