@@ -370,11 +370,12 @@
 					{@const right = `${xScale(score)}px`}
 					{@const width = `${PLAYER_WIDTH}px`}
 					{@const background = colors[i]}
+					{@const disabled = players[key].disabled}
 					<li class="player-wrapper">
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
 							class="player"
-							class:disabled={players[key].disabled}
+							class:disabled
 							style:right
 							style:width
 							style:background
