@@ -34,7 +34,6 @@
 	const startClock = () => {
 		clock.set(DURATION, { duration: 0 });
 		clock.set(0, { duration: 1000 * DURATION }).then(() => {
-			round += 1;
 			send({ event: "clock", payload: false });
 		});
 	};
@@ -70,7 +69,10 @@
 		send({ event: "clear" });
 	};
 
-	$: round, send({ event: "round", payload: round });
+	const onRound = () => {
+		round += 1;
+		send({ event: "round", payload: round });
+	};
 
 	onMount(async () => {
 		setupBroadcast();
@@ -136,6 +138,7 @@
 	<fieldset>
 		<h3>prepare for new round</h3>
 		<button on:click={onClear}>clear</button>
+		<button on:click={onRound}>increase round</button>
 	</fieldset>
 </section>
 
