@@ -282,7 +282,7 @@
 					clock.set(DURATION, { duration: 0 });
 					disabled = false;
 					reveal = true;
-					inputEl.focus();
+					if (inputEl) inputEl.focus();
 					clock.set(0, { duration: DURATION * 1000 }).then(() => {
 						console.log("promise", Date.now());
 					});
