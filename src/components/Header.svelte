@@ -13,6 +13,10 @@
 </header>
 
 <style>
+	header {
+		margin-bottom: 32px;
+	}
+
 	.wordmark {
 		display: none;
 		position: absolute;

@@ -12,9 +12,9 @@
 	import Game from "$components/Game.svelte";
 	import clues from "$data/clues.csv";
 
-	const DURATION = 60;
+	const duration = 60;
+	const clock = tweened(duration);
 
-	const clock = tweened(DURATION);
 	let channel;
 	let clueText;
 	let clueId;
@@ -32,8 +32,8 @@
 	};
 
 	const startClock = () => {
-		clock.set(DURATION, { duration: 0 });
-		clock.set(0, { duration: 1000 * DURATION }).then(() => {
+		clock.set(duration, { duration: 0 });
+		clock.set(0, { duration: 1000 * duration }).then(() => {
 			send({ event: "clock", payload: false });
 		});
 	};
@@ -65,7 +65,7 @@
 	};
 
 	const onClear = () => {
-		clock.set(DURATION, { duration: 0 });
+		clock.set(duration, { duration: 0 });
 		send({ event: "clear" });
 	};
 
@@ -104,7 +104,9 @@
 		<h3>clue stuff</h3>
 		<select on:change={onClueChange}>
 			{#each clues as clue, i}
-				<option value={clue.id}>{i + 1}. {clue.text}</option>
+				<option value={clue.id}
+					>{i + 1}. {@html clue.text.replace(/\|/g, " + ")}</option
+				>
 			{/each}
 		</select>
 		<button
@@ -133,7 +135,7 @@
 		<button on:click={() => send({ event: "clock", payload: true })}
 			>start</button
 		>
-		<p>{$clock.toFixed(2)}</p>
+		<p>{$clock.toFixed(1)}</p>
 	</fieldset>
 
 	<fieldset>

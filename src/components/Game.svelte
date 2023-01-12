@@ -4,14 +4,19 @@
 	import { browser } from "$app/environment";
 	import { createClient } from "@supabase/supabase-js";
 	import { insert } from "$utils/supabase.js";
-	import { range, scaleLinear, max } from "d3";
+	import { range } from "d3";
 	import loadCsv from "$utils/loadCsv.js";
-	import Answers from "$components/Answers.sveltesvelte";
+	import Name from "$components/Name.svelte";
+	import Answers from "$components/Answers.svelte";
+	import Race from "$components/Race.svelte";
+	import Info from "$components/Info.svelte";
+	import UserInput from "$components/UserInput.svelte";
 
-	export let spectator;
+	export let spectator = false;
 
-	const PLAYER_WIDTH = 200;
-	const DURATION = 60;
+	const dispatch = createEventDispatcher();
+
+	const duration = 60;
 	const colors = [
 		"#8dd3c7",
 		"#ffffb3",
@@ -27,8 +32,6 @@
 		"#ffed6f"
 	];
 
-	const dispatch = createEventDispatcher();
-
 	const reasons = [
 		"(or a variation) was played by opponent",
 		"is too short",
@@ -42,14 +45,10 @@
 
 	const client = createClient(supabaseUrl, supabaseAnonKey);
 
-	const clock = tweened(DURATION);
+	const clock = tweened(duration);
 
-	let xScale = scaleLinear();
-
-	let inputEl;
 	let reveal;
 	let timeout;
-	let raceWidth = 100;
 	let round = 1;
 	let gameId;
 	let disabled = true;
@@ -57,13 +56,13 @@
 	let players = {};
 	let user;
 	let name;
-	let word;
 	let view;
 	let clueId;
 	let clueText = "";
 	let answerKey;
 	let validWords;
 	let invalid = "";
+	let userInput;
 
 	// let playedLemmas;
 
@@ -136,13 +135,106 @@
 		return id;
 	};
 
-	const submitName = async () => {
+	const onSubmitName = async ({ detail }) => {
+		name = detail;
 		if (!name) return;
 		user = generateId(6);
 		const response = await insert({
 			table: "wordgame_tournament-players",
 			data: { name, user }
 		});
+	};
+
+	const onSubmitWord = async ({ detail }) => {
+		const text = detail;
+		const lemmas = lookupLemmas(text);
+		const { valid, reason } = validate({ text, lemmas });
+		const points = valid ? getPoints({ text }) : undefined;
+
+		if (valid) {
+			await insert({
+				table: "wordgame_tournament-answers",
+				data: { user, text, clue: clueId, lemmas, points, game: gameId, round }
+			});
+		} else {
+			if (timeout) clearTimeout(timeout);
+			invalid = `${text} ${reasons[reason]}`;
+			timeout = setTimeout(() => {
+				invalid = "";
+			}, 2000);
+		}
+	};
+
+	const resetPlayerAnswers = () => {
+		for (let d in players) {
+			players[d].answers = [];
+		}
+	};
+
+	const resetClue = () => {
+		clueId = "";
+		clueText = "";
+	};
+
+	const resetClock = () => {
+		clock.set(duration, { duration: 0 });
+	};
+
+	const resetScore = () => {
+		for (let d in players) {
+			players[d].score = 0;
+		}
+	};
+
+	const onPlayerClick = (key) => {
+		if (spectator) dispatch("toggle", key);
+	};
+
+	const subscribeToBroadcast = () => {
+		channel
+			.on("broadcast", { event: "clue" }, async ({ payload }) => {
+				reveal = false;
+				const { id, text } = payload;
+				const url = `https://pudding.cool/games/words-against-strangers-data/clue-answers/${id}.csv?version=${Date.now()}`;
+				answerKey = await loadCsv(url);
+				validWords = answerKey.map((d) => d.word);
+				clueText = text;
+				clueId = id;
+			})
+			.on("broadcast", { event: "view" }, ({ payload }) => {
+				view = payload;
+			})
+			.on("broadcast", { event: "clock" }, ({ payload }) => {
+				if (payload) {
+					clock.set(duration, { duration: 0 });
+					disabled = false;
+					reveal = true;
+					if (!spectator && !players[user].disabled) userInput.focus();
+					clock.set(0, { duration: duration * 1000 }).then(() => {
+						console.log("promise", Date.now());
+					});
+				} else {
+					console.log("stop", Date.now(), $clock);
+					disabled = true;
+				}
+			})
+			.on("broadcast", { event: "game" }, ({ payload }) => {
+				gameId = payload;
+			})
+			.on("broadcast", { event: "round" }, ({ payload }) => {
+				round = payload;
+			})
+			.on("broadcast", { event: "clear" }, ({ payload }) => {
+				resetPlayerAnswers();
+				resetInput();
+				resetClock();
+				resetScore();
+				resetClue();
+			})
+			.on("broadcast", { event: "toggle" }, ({ payload }) => {
+				players[payload].disabled = !players[payload].disabled;
+			})
+			.subscribe();
 	};
 
 	const subscribeAnswers = () => {
@@ -197,204 +289,54 @@
 			.subscribe();
 	};
 
-	const submitWord = async () => {
-		const text = word;
-		const lemmas = lookupLemmas(text);
-		const { valid, reason } = validate({ text, lemmas });
-		const points = valid ? getPoints({ text }) : undefined;
-
-		resetInput();
-
-		if (valid) {
-			await insert({
-				table: "wordgame_tournament-answers",
-				data: { user, text, clue: clueId, lemmas, points, game: gameId, round }
-			});
-		} else {
-			if (timeout) clearTimeout(timeout);
-			invalid = `${text} ${reasons[reason]}`;
-			timeout = setTimeout(() => {
-				invalid = "";
-			}, 2000);
-		}
-	};
-
-	const resetPlayerAnswers = () => {
-		for (let d in players) {
-			players[d].answers = [];
-		}
-	};
-
-	const resetInput = () => {
-		word = "";
-	};
-
-	const resetClue = () => {
-		clueId = "";
-		clueText = "";
-	};
-
-	const resetClock = () => {
-		clock.set(DURATION, { duration: 0 });
-	};
-
-	const resetScore = () => {
-		for (let d in players) {
-			players[d].score = 0;
-		}
-	};
-
-	const updateScale = () => {
-		xScale.range([raceWidth - PLAYER_WIDTH, 0]);
-		xScale = xScale;
-	};
-
-	const onPlayerClick = (key) => {
-		if (spectator) dispatch("toggle", key);
-	};
-
 	$: isPlayer = !spectator;
-	$: scores = Object.values(players).map((d) => d.score);
-	$: maxScore = max(scores);
-	$: xDomain = [0, maxScore || 1];
-	$: xScale.domain(xDomain);
-	$: updateScale(raceWidth);
+	$: showAnswers =
+		spectator || disabled || (players[user] && players[user].disabled);
+	$: showUserInput = isPlayer && players[user] && !players[user].disabled;
+	$: showName = view === "name" && isPlayer;
+	$: showInfo = view === "play" || spectator;
 
 	onMount(() => {
 		const client = createClient(supabaseUrl, supabaseAnonKey);
 		channel = client.channel("game");
 
-		channel
-			.on("broadcast", { event: "clue" }, async ({ payload }) => {
-				reveal = false;
-				const { id, text } = payload;
-				const url = `https://pudding.cool/games/words-against-strangers-data/clue-answers/${id}.csv?version=${Date.now()}`;
-				answerKey = await loadCsv(url);
-				validWords = answerKey.map((d) => d.word);
-				clueText = text;
-				clueId = id;
-			})
-			.on("broadcast", { event: "view" }, ({ payload }) => {
-				view = payload;
-			})
-			.on("broadcast", { event: "clock" }, ({ payload }) => {
-				if (payload) {
-					clock.set(DURATION, { duration: 0 });
-					disabled = false;
-					reveal = true;
-					if (inputEl) inputEl.focus();
-					clock.set(0, { duration: DURATION * 1000 }).then(() => {
-						console.log("promise", Date.now());
-					});
-				} else {
-					console.log("stop", Date.now(), $clock);
-					disabled = true;
-				}
-			})
-			.on("broadcast", { event: "game" }, ({ payload }) => {
-				gameId = payload;
-			})
-			.on("broadcast", { event: "round" }, ({ payload }) => {
-				round = payload;
-			})
-			.on("broadcast", { event: "clear" }, ({ payload }) => {
-				resetPlayerAnswers();
-				resetInput();
-				resetClock();
-				resetScore();
-				resetClue();
-			})
-			.on("broadcast", { event: "toggle" }, ({ payload }) => {
-				players[payload].disabled = !players[payload].disabled;
-			})
-			.subscribe();
-
+		subscribeToBroadcast();
 		subscribeAnswers();
 		subscribePlayers();
 	});
 </script>
 
-{#if view === "name" && isPlayer}
+{#if showName}
 	<section class="name">
 		<div class="ui">
-			<p class:hidden={!user}>thanks {name}! <br />please wait.</p>
-
-			<form on:submit|preventDefault={submitName} class:hidden={user}>
-				<label for="name">enter your name</label>
-				<input id="name" bind:value={name} maxlength="8" />
-				<button type="submit">&rarr;</button>
-			</form>
+			<Name {user} on:submit={onSubmitName} />
 		</div>
 	</section>
-{:else if view === "play" || spectator}
+{:else if showInfo}
 	<section class="info">
-		<h2>{gameId}: round {round}</h2>
-		{#if spectator}
-			<p>
-				clue: {#each clueText.split("|") as c}<span>{@html c}</span>{/each}
-			</p>
-		{/if}
+		<Info {gameId} {round} {spectator} {clueText} />
 	</section>
 	<section class="play">
-		{#if isPlayer && !players[user].disabled}
+		{#if showUserInput}
 			<div class="ui">
-				<h3 class="time">time: {$clock.toFixed(2)}</h3>
-				<h3 class="clue">clue:</h3>
-				<div class="clues">
-					<ul class:reveal>
-						{#each clueText.split("|") as c}
-							<li>{@html c}</li>
-						{/each}
-					</ul>
-				</div>
-				<form on:submit|preventDefault={submitWord}>
-					<input bind:this={inputEl} bind:value={word} {disabled} />
-					<button type="submit" {disabled}>&rarr;</button>
-				</form>
-				<p class="invalid">{invalid}</p>
-				<div class="answers">
-					<ul>
-						{#each players[user].answers as { text, lemmas }}
-							<li>{text}</li>
-						{/each}
-					</ul>
-				</div>
+				<UserInput
+					bind:this={userInput}
+					answers={players[user].answers}
+					time={$clock}
+					{reveal}
+					{clueText}
+					{disabled}
+					{invalid}
+					on:submit={onSubmitWord}
+				/>
 			</div>
 		{/if}
 
-		<div class="race" bind:clientWidth={raceWidth}>
-			<ul class="players">
-				{#each Object.keys(players) as key, i}
-					{@const name = players[key].name}
-					{@const score = players[key].score}
-					{@const right = `${xScale(score)}px`}
-					{@const width = `${PLAYER_WIDTH}px`}
-					{@const background = colors[i]}
-					{@const disabled = players[key].disabled}
-					<li class="player-wrapper">
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<div
-							class="player"
-							class:disabled
-							style:right
-							style:width
-							style:background
-							on:click={() => onPlayerClick(key)}
-						>
-							<p>
-								<span class="username">{name}</span><span class="score"
-									>{score}</span
-								>
-							</p>
-						</div>
-					</li>
-				{/each}
-			</ul>
-		</div>
+		<Race {players} {colors} {spectator} {user} on:click={onPlayerClick} />
 	</section>
 
 	<section class="answers">
-		{#if spectator || disabled || players[user].disabled}
+		{#if showAnswers}
 			<Answers {players} {colors} />
 		{/if}
 	</section>
@@ -411,21 +353,12 @@
 		margin-top: 64px;
 	}
 
-	h3 {
-		margin: 0;
-	}
-
-	p {
-		margin: 0;
+	section {
+		padding: 16px;
 	}
 
 	.play {
 		display: flex;
-		padding: 32px 16px;
-	}
-
-	.name {
-		margin-top: 32px;
 	}
 
 	.ui {
@@ -434,111 +367,5 @@
 		margin-right: 16px;
 		padding: 16px;
 		background: var(--color-gray-100);
-	}
-
-	.race {
-		flex-grow: 1;
-	}
-
-	.players {
-		width: 100%;
-		margin: 0;
-		padding: 0;
-	}
-
-	li.player-wrapper {
-		height: 48px;
-		position: relative;
-		margin-bottom: 16px;
-		list-style-type: none;
-		width: 100%;
-	}
-
-	.player {
-		top: 0;
-		padding: 8px;
-		position: absolute;
-		transition: right 0.25s ease-in-out;
-		margin: 0;
-		left: auto;
-		border: 1px solid var(--color-gray-500);
-	}
-
-	.player.disabled {
-		opacity: 0.5;
-		filter: grayscale(100%);
-	}
-
-	.player p {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin: 0;
-		user-select: none;
-	}
-
-	.username {
-		font-weight: 700;
-		font-size: var(--18px);
-	}
-
-	.score {
-		font-size: var(--24px);
-	}
-
-	.hidden {
-		display: none;
-	}
-
-	input {
-		width: calc(100% - 48px);
-	}
-
-	button {
-		width: 32px;
-	}
-
-	.ui .answers {
-		height: 320px;
-		overflow-y: hidden;
-	}
-
-	.ui .answers ul {
-		list-style-type: none;
-		margin: 0 16px;
-		padding: 0;
-		display: flex;
-		flex-direction: column-reverse;
-	}
-
-	.ui .clues ul {
-		list-style-type: disc;
-		margin-bottom: 16px;
-		visibility: hidden;
-	}
-
-	.ui .clues ul {
-		visibility: visible;
-	}
-
-	.ui .clue {
-		margin-bottom: 16px;
-	}
-
-	.info p {
-		text-align: center;
-		margin-top: 16px;
-	}
-
-	.info p span {
-		margin-right: 8px;
-		background: var(--color-gray-100);
-		padding: 8px;
-	}
-
-	.invalid {
-		margin: 16px 0;
-		color: var(--color-focus);
-		height: 36px;
 	}
 </style>
