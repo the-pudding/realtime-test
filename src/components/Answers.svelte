@@ -7,9 +7,9 @@
 	{#each Object.keys(players) as key, i}
 		{@const background = colors[i]}
 		{@const disabled = players[key].disabled}
-		<div class="player" style:background>
+		<div class="player" style:background class:disabled>
 			<p>{players[key].name}</p>
-			<ul class="answers" class:disabled>
+			<ul class="answers">
 				{#each players[key].answers as { text }}
 					<li>{text}</li>
 				{/each}
@@ -34,9 +34,16 @@
 		border: 1px solid var(--color-gray-500);
 	}
 
+	.player.disabled {
+		opacity: 0.5;
+		filter: grayscale(100%);
+	}
+
 	p {
 		font-weight: 700;
 		font-size: var(--18px);
+		margin: 0;
+		margin-bottom: 8px;
 	}
 
 	ul {
@@ -44,11 +51,6 @@
 		flex-direction: column-reverse;
 		margin: 0;
 		padding: 0;
-	}
-
-	ul.disabled {
-		opacity: 0.5;
-		filter: grayscale(100%);
 	}
 
 	li {

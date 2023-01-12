@@ -209,7 +209,7 @@
 					clock.set(duration, { duration: 0 });
 					disabled = false;
 					reveal = true;
-					if (!spectator && !players[user].disabled) userInput.focus();
+					if (showUserInput) userInput.focus();
 					clock.set(0, { duration: duration * 1000 }).then(() => {
 						console.log("promise", Date.now());
 					});
@@ -225,7 +225,7 @@
 				round = payload;
 			})
 			.on("broadcast", { event: "clear" }, ({ payload }) => {
-				if (!spectator && !players[user].disabled) userInput.reset();
+				if (showUserInput) userInput.reset();
 				resetPlayerAnswers();
 				resetClock();
 				resetScore();
