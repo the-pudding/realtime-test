@@ -193,7 +193,6 @@
 	};
 
 	const mapAndSortPlayers = (sort) => {
-		console.log(sort);
 		playersRender = Object.values(players);
 		if (sort) playersRender.sort((a, b) => ascending(a.disabled, b.disabled));
 	};
@@ -257,7 +256,7 @@
 					table: "wordgame_tournament-answers"
 				},
 				(payload) => {
-					// TODO more efficient way to reactively update?
+					// TODO remove log
 					console.log(payload.new);
 					const p = players[payload.new.user];
 					p.answers = [
