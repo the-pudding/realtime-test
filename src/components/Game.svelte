@@ -46,6 +46,7 @@
 
 	let xScale = scaleLinear();
 
+	let inputEl;
 	let reveal;
 	let timeout;
 	let raceWidth = 100;
@@ -281,6 +282,7 @@
 					clock.set(DURATION, { duration: 0 });
 					disabled = false;
 					reveal = true;
+					inputEl.focus();
 					clock.set(0, { duration: DURATION * 1000 }).then(() => {
 						console.log("promise", Date.now());
 					});
@@ -346,7 +348,7 @@
 					</ul>
 				</div>
 				<form on:submit|preventDefault={submitWord}>
-					<input bind:value={word} {disabled} />
+					<input bind:this={inputEl} bind:value={word} {disabled} />
 					<button type="submit" {disabled}>&rarr;</button>
 				</form>
 				<p class="invalid">{invalid}</p>
