@@ -11,6 +11,10 @@
 		inputEl.focus();
 	};
 
+	export const reset = () => {
+		word = "";
+	};
+
 	const dispatch = createEventDispatcher();
 
 	let inputEl;

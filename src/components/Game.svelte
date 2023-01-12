@@ -225,8 +225,8 @@
 				round = payload;
 			})
 			.on("broadcast", { event: "clear" }, ({ payload }) => {
+				if (!spectator && !players[user].disabled) userInput.reset();
 				resetPlayerAnswers();
-				resetInput();
 				resetClock();
 				resetScore();
 				resetClue();
