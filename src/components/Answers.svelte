@@ -7,8 +7,8 @@
 		<div class="player" style:background class:disabled>
 			<p>{name}</p>
 			<ul class="answers">
-				{#each answers as { text, points }}
-					<li>{text} ({points})</li>
+				{#each answers as { text, points, strike }}
+					<li class:strike>{text} <span>{points}</span></li>
 				{/each}
 			</ul>
 		</div>
@@ -54,5 +54,14 @@
 		margin: 0;
 		list-style-type: none;
 		font-size: var(--18px);
+	}
+
+	li.strike {
+		text-decoration: line-through;
+	}
+
+	span {
+		opacity: 0.75;
+		font-size: var(--14px);
 	}
 </style>

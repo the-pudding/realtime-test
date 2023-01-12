@@ -30,7 +30,11 @@
 		"#d9d9d9",
 		"#bc80bd",
 		"#ccebc5",
-		"#ffed6f"
+		"#ffed6f",
+		"#cccccc",
+		"#cccccc",
+		"#cccccc",
+		"#cccccc"
 	];
 
 	const reasons = [
@@ -65,8 +69,8 @@
 	let validWords;
 	let invalid = "";
 	let userInput;
-
-	// let playedLemmas;
+	let playedLemmas = new Map();
+	let threshold = 1;
 
 	const lemmaExists = ({ lemmas, corpus }) => {
 		const filtered = lemmas.split("|").filter((l) => {
@@ -82,12 +86,6 @@
 	};
 
 	const isWordlist = (text) => !validWords.includes(text);
-
-	// const isTaken = (lemmas) => {
-	// 	const match = playedLemmas.find(d => d === lemmas);
-	// 	if (match) console.log(match.)
-	// 	return !match;
-	// };
 
 	const isDuplicate = ({ text, lemmas }) => {
 		const corpus = players[user].answers.map((d) => d.lemmas);
@@ -112,10 +110,6 @@
 			valid = false;
 			reason = 4;
 		}
-		// else if (isTaken({ text, lemmas })) {
-		// 	valid = false;
-		// 	reason = 0;
-		// }
 
 		return { valid, reason };
 	};
@@ -213,6 +207,10 @@
 			})
 			.on("broadcast", { event: "clock" }, ({ payload }) => {
 				if (payload) {
+					threshold = Math.ceil(
+						playersRender.filter((d) => !d.disabled).length / 2
+					);
+					console.log(threshold);
 					clock.set(duration, { duration: 0 });
 					disabled = false;
 					reveal = true;
@@ -259,22 +257,25 @@
 					// TODO remove log
 					console.log(payload.new);
 					const p = players[payload.new.user];
-					p.answers = [
-						...p.answers,
-						{
-							text: payload.new.text,
-							lemmas: payload.new.lemmas,
-							created: payload.new.created_at,
-							points: payload.new.points
-						}
-					];
 
-					p.score += payload.new.points;
-					// playedLemmas.push({
-					// 	self: payload.new.user === user,
-					// 	timestamp: payload.new.created_at,
-					// 	lemmas: payload.new.lemmas
-					// });
+					// TODO assuming timestamps match payload order
+					const countPlayed = playedLemmas.get(payload.new.lemmas) || 0;
+
+					const awardPoints = countPlayed < threshold;
+					if (awardPoints) p.score += payload.new.points;
+
+					const answer = {
+						text: payload.new.text,
+						lemmas: payload.new.lemmas,
+						timestamp: payload.new.created_at,
+						points: payload.new.points,
+						strike: !awardPoints
+					};
+
+					p.answers = [...p.answers, answer];
+
+					playedLemmas.set(answer.lemmas, countPlayed + 1);
+
 					players = players;
 					mapAndSortPlayers();
 				}
