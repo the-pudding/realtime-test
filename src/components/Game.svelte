@@ -6,7 +6,7 @@
 	import { insert } from "$utils/supabase.js";
 	import { range, scaleLinear, max } from "d3";
 	import loadCsv from "$utils/loadCsv.js";
-	import Post from "$components/Post.svelte";
+	import Answers from "$components/Answers.sveltesvelte";
 
 	export let spectator;
 
@@ -393,9 +393,9 @@
 		</div>
 	</section>
 
-	<section class="post">
+	<section class="answers">
 		{#if spectator || disabled || players[user].disabled}
-			<Post {players} {colors} />
+			<Answers {players} {colors} />
 		{/if}
 	</section>
 {:else}
